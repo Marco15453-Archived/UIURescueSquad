@@ -1,6 +1,5 @@
 # UIURescueSquad
  A new exiled plugin that add a new GOI to the game [FBI/UIU]
-<<<<<<< HEAD
 
 # Installation
 Download the .dll file of the latest release and place it inside the Exiled Plugins folder
@@ -8,7 +7,7 @@ Download the .dll file of the latest release and place it inside the Exiled Plug
 # Configs
 ```yaml
 UIURescueSquad:
-# Is the plugin enabled?
+  # Is the plugin enabled?
   is_enabled: true
   # Probability of a UIU Squad replacing a MTF spawn
   probability: 50
@@ -65,5 +64,3 @@ UIURescueSquad:
   # UIU Leader Rank (THE BADGE ON THE LIST)
   u_i_u_leader_rank: UIU Leader
 ```
-=======
->>>>>>> fd2f21ea52712548cef28cf1f195a3ce21430657
