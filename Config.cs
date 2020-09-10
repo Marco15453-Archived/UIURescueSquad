@@ -10,8 +10,10 @@ namespace UIURescueSquad
         [Description("Is the plugin enabled?")]
         public bool IsEnabled { get; set; } = true;
 
+        [Description("How many mtfs must have respawn to spawn UIU")]
+        public int respawns { get; set; } = 1;
         [Description("Probability of a UIU Squad replacing a MTF spawn")]
-        public float probability { get; set; } = 50f;
+        public int probability { get; set; } = 50;
 
         [Description("Use hints instead of broadcasts?")]
         public bool UseHints { get; set; } = false;

@@ -20,8 +20,6 @@ C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\bi
 C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\bin\Release\System.Memory.dll
 C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\bin\Release\System.Buffers.dll
 C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\bin\Release\UnityEngine.SharedInternalsModule.dll
-C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\bin\Release\System.Numerics.Vectors.dll
-C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\bin\Release\System.Runtime.CompilerServices.Unsafe.dll
 C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\obj\Release\UIURescueSquad.csproj.CoreCompileInputs.cache
 C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\obj\Release\UIURescueSquad.csproj.CopyComplete
 C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\obj\Release\UIURescueSquad.dll

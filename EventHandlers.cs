@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using MEC;
@@ -13,15 +14,9 @@ namespace UIURescueSquad.Handlers
 
         public static List<int> uiuPlayers = new List<int>();
 
-        private static readonly System.Random random = new System.Random();
-        private static double RandomNumberBetween(double minValue, double maxValue)
-        {
-            var next = random.NextDouble();
+        private int respawns = 0;
 
-            return minValue + (next * (maxValue - minValue));
-        }
-
-        float spawnramdomchance = (float)RandomNumberBetween(1, 100);
+        private static System.Random rand = new System.Random();
 
         private static Vector3 SpawnPos = new Vector3(170, 985, 29);
         //NOTE: Make spawnpos configurable
@@ -36,9 +31,9 @@ namespace UIURescueSquad.Handlers
         {
             if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
             {
-                if (spawnramdomchance <= plugin.Config.probability)
+                if (rand.Next(1, 101) <= plugin.Config.probability & respawns > plugin.Config.respawns)
                 {
-                    if(plugin.Config.AnnouncementText != null)
+                    if (plugin.Config.AnnouncementText != null)
                     {
                         Map.ClearBroadcasts();
                         Map.Broadcast(plugin.Config.AnnouncementTime, plugin.Config.AnnouncementText);
@@ -94,6 +89,7 @@ namespace UIURescueSquad.Handlers
                         }
                     });
                 }
+                respawns++;
             }
         }
         public void OnDying(DiedEventArgs ev)
