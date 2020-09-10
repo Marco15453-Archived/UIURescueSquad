@@ -28,3 +28,4 @@ C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\bi
 C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\bin\Release\UnityEngine.UnityWebRequestModule.dll
 C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\bin\Release\UnityEngine.UNETModule.dll
 C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\bin\Release\UnityEngine.JSONSerializeModule.dll
+C:\Users\jesus\Documents\Plugins-EXILED\UIURescueSquad-EXILED2\UIURescueSquad\obj\Release\UIURescueSquad.csprojAssemblyReference.cache

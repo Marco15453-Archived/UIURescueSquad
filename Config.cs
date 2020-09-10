@@ -22,6 +22,8 @@ namespace UIURescueSquad
         [Description("Entrance announcement message time")]
         public ushort AnnouncementTime { get; set; } = 10;
 
+        [Description("Use hints instead of broadcasts?")]
+        public bool UseHintsHere { get; set; } = false;
         [Description("UIU Player broadcast (null to disable it)")]
         public string UIUBroadcast { get; set; } = "<i>You are an</i><color=yellow><b> UIU trooper</b></color>, <i>help </i><color=#0377fc><b>MTFs</b></color><i> to finish its job</i>";
         [Description("UIU Player broadcast (null to disable it)")]

@@ -35,8 +35,11 @@ namespace UIURescueSquad.Handlers
                 {
                     if (plugin.Config.AnnouncementText != null)
                     {
-                        Map.ClearBroadcasts();
-                        Map.Broadcast(plugin.Config.AnnouncementTime, plugin.Config.AnnouncementText);
+                        if (plugin.Config.AnnouncementText != null && plugin.Config.AnnouncementText != null)
+                        {
+                            Map.ClearBroadcasts();
+                            Map.Broadcast(plugin.Config.AnnouncementTime, plugin.Config.AnnouncementText);
+                        }
                     }
                     //Cassie.Message("Attention, the U I U HasEntered please help the MtfUnit that are AwaitingRecontainment .g7 ScpSubjects", true, true);
                     //NOTE: disable MTF entrance message to allow cassie messages
@@ -45,9 +48,9 @@ namespace UIURescueSquad.Handlers
                         foreach (Player player in ev.Players)
                         {
                             uiuPlayers.Add(player.Id);
-                            if (plugin.Config.AnnouncementText != null && plugin.Config.AnnouncementTime != null)
+                            if (plugin.Config.UIUBroadcast != null && plugin.Config.UIUBroadcastTime != null)
                             {
-                                if (plugin.Config.UseHints)
+                                if (plugin.Config.UseHintsHere)
                                 {
                                     player.ClearBroadcasts();
                                     player.ShowHint(plugin.Config.UIUBroadcast, plugin.Config.UIUBroadcastTime);
