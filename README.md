@@ -10,6 +10,8 @@ UIURescueSquad:
   # Is the plugin enabled?
   is_enabled: true
 
+  # How many mtfs must have respawn to spawn UIU
+  respawns: 1
   # Probability of a UIU Squad replacing a MTF spawn
   probability: 50
 
