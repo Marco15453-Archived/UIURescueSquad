@@ -25,6 +25,7 @@ namespace UIURescueSquad.Handlers
         public void OnWaitingForPlayers()
         {
             uiuPlayers.Clear();
+            respawns = 0;
         }
 
         public void OnTeamRespawn(RespawningTeamEventArgs ev)
