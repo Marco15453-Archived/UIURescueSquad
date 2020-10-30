@@ -1,7 +1,6 @@
 ﻿using Exiled.API.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel;
-using UnityEngine;
 
 namespace UIURescueSquad
 {
@@ -10,17 +9,23 @@ namespace UIURescueSquad
         [Description("Is the plugin enabled?")]
         public bool IsEnabled { get; set; } = true;
 
-        [Description("How many mtfs must have respawn to spawn UIU")]
+        [Description("How many mtfs respawns must have happened to spawn UIU")]
         public int respawns { get; set; } = 1;
         [Description("Probability of a UIU Squad replacing a MTF spawn")]
         public int probability { get; set; } = 50;
 
         [Description("Use hints instead of broadcasts?")]
         public bool UseHints { get; set; } = false;
-        [Description("Entrance announcement message (null to disable it)")]
+        [Description("Entrance broadcast announcement message (null to disable it)")]
         public string AnnouncementText { get; set; } = "<b>The <color=#FFFA4B>UIU Rescue Squad</color> has arrived to the facility</b>";
-        [Description("Entrance announcement message time")]
+        [Description("Entrance broadcast announcement message time")]
         public ushort AnnouncementTime { get; set; } = 10;
+
+        [Description("Disable NTF default Announce")]
+        public bool DisableNTFAnnounce { get; set; } = true;
+        [Description("**ONLY WORKS IF DisableNTFAnnounce = true** Entrance Cassie Message")]
+        public string AnnouncementCassie { get; set; } = "The U I U Squad Has Entered The Facility AwaitingRecontainment";
+
 
         [Description("Use hints instead of broadcasts?")]
         public bool UseHintsHere { get; set; } = false;

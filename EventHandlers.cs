@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using MEC;
@@ -15,6 +14,7 @@ namespace UIURescueSquad.Handlers
         public static List<int> uiuPlayers = new List<int>();
 
         private int respawns = 0;
+        private int randnums;
 
         private static System.Random rand = new System.Random();
 
@@ -32,7 +32,9 @@ namespace UIURescueSquad.Handlers
         {
             if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
             {
-                if (rand.Next(1, 101) <= plugin.Config.probability & respawns > plugin.Config.respawns)
+                randnums = rand.Next(1, 101);
+                Log.Info(randnums);
+                if (randnums <= plugin.Config.probability & respawns >= plugin.Config.respawns)
                 {
                     if (plugin.Config.AnnouncementText != null)
                     {
@@ -44,24 +46,23 @@ namespace UIURescueSquad.Handlers
                     }
                     //Cassie.Message("Attention, the U I U HasEntered please help the MtfUnit that are AwaitingRecontainment .g7 ScpSubjects", true, true);
                     //NOTE: disable MTF entrance message to allow cassie messages
-                    Timing.CallDelayed(0.01f, () =>
+                    foreach (Player player in ev.Players)
                     {
-                        foreach (Player player in ev.Players)
+                        uiuPlayers.Add(player.Id);
+                        if (plugin.Config.UIUBroadcast != null && plugin.Config.UIUBroadcastTime.ToString() != null)
                         {
-                            uiuPlayers.Add(player.Id);
-                            if (plugin.Config.UIUBroadcast != null && plugin.Config.UIUBroadcastTime != null)
+                            if (plugin.Config.UseHintsHere)
                             {
-                                if (plugin.Config.UseHintsHere)
-                                {
-                                    player.ClearBroadcasts();
-                                    player.ShowHint(plugin.Config.UIUBroadcast, plugin.Config.UIUBroadcastTime);
-                                }
-                                else
-                                {
-                                    player.ClearBroadcasts();
-                                    player.Broadcast(plugin.Config.UIUBroadcastTime, plugin.Config.UIUBroadcast);
-                                }
+                                player.ClearBroadcasts();
+                                player.ShowHint(plugin.Config.UIUBroadcast, plugin.Config.UIUBroadcastTime);
                             }
+                            else
+                            {
+                                player.ClearBroadcasts();
+                                player.Broadcast(plugin.Config.UIUBroadcastTime, plugin.Config.UIUBroadcast);
+                            }
+                        }
+                        Timing.CallDelayed(0.01f, () => {
                             switch (player.Role)
                             {
                                 case RoleType.NtfCadet:
@@ -90,12 +91,25 @@ namespace UIURescueSquad.Handlers
                                     player.RankColor = "yellow";
                                     break;
                             }
-                        }
-                    });
+                        });
+                    }
                 }
-                respawns++;
+            respawns++;
             }
         }
+
+        public void OnAnnouncingMTF(AnnouncingNtfEntranceEventArgs ev)
+        {
+            if (randnums <= plugin.Config.probability & respawns >= plugin.Config.respawns + 1)
+            {
+                ev.IsAllowed = false;
+                if (plugin.Config.DisableNTFAnnounce)
+                {
+                    Cassie.Message(plugin.Config.AnnouncementCassie);
+                }
+            }
+        }
+
         public void OnDying(DiedEventArgs ev)
         {
             if (uiuPlayers.Contains(ev.Target.Id))

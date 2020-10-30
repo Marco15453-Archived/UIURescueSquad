@@ -17,6 +17,7 @@ namespace UIURescueSquad
 
             EventHandlers = new EventHandlers(this);
 
+            Exiled.Events.Handlers.Map.AnnouncingNtfEntrance += EventHandlers.OnAnnouncingMTF;
             Exiled.Events.Handlers.Server.RespawningTeam += EventHandlers.OnTeamRespawn;
             Exiled.Events.Handlers.Server.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.ChangingRole += EventHandlers.OnChanging;
@@ -26,6 +27,7 @@ namespace UIURescueSquad
         {
             base.OnDisabled();
 
+            Exiled.Events.Handlers.Map.AnnouncingNtfEntrance -= EventHandlers.OnAnnouncingMTF;
             Exiled.Events.Handlers.Server.RespawningTeam -= EventHandlers.OnTeamRespawn;
             Exiled.Events.Handlers.Server.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.ChangingRole -= EventHandlers.OnChanging;
