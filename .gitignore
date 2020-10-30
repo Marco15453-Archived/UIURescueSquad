@@ -1,7 +1,13 @@
-README.md/
+bin/
+
+obj/Debug
 
 Properties/
 
+bin/Release
+
 obj/
 
-bin/
+*.csproj
+
+*.zip
