@@ -191,13 +191,4 @@ namespace UIURescueSquad.Handlers
             uiuPlayers.Remove(player);
         }
     }
-
-    //Added LazyInstance (this was neccesary for making your plugin compatibile with my RespawnTimer plugin, if you don't want that you can get rid of it)
-    //Replaced badges with custominfo
-    //Added ammo config for classes
-    //Cleaned up code (in main class I registered events in a shorter way)
-    //uiuPlayers holds actual players, not id numbers (requiered for Custom Player Info)
-    //Added KillUIU function which make deleting uiuPlayers from list easier
-    //Remade Cassie announcment message. There are 2 diffrent configurable cassie announcments (one for when SCPs are dead). Cassie be also be glitchy meaing there is by default 5 % chance of jamming or .g(num)
-    //Get rid of unused UseHints option in Config and string Rank in EventHandlers
 }
