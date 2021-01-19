@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.Collections.Generic;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
@@ -148,7 +148,8 @@ namespace UIURescueSquad.Handlers
                         StringBuilder message = new StringBuilder();
 
                         message.Append(UIURescueSquad.Instance.Config.AnnouncementCassie);
-                        message.Replace("{scpnum}", ev.ScpsLeft.ToString());
+                        message.Replace("{scpnum}", $"{ev.ScpsLeft} scpsubject");
+                        if (ev.ScpsLeft > 1) message.Append("s");
 
                         Cassie.GlitchyMessage(message.ToString(), 0.05f, 0.05f);
                     }
