@@ -150,7 +150,7 @@ namespace UIURescueSquad.Handlers
                         message.Append(UIURescueSquad.Instance.Config.AnnouncementCassie);
                         message.Replace("{scpnum}", ev.ScpsLeft.ToString());
 
-                        Cassie.GlitchyMessage(message.ToString(), 0.5f, 0.5f);
+                        Cassie.GlitchyMessage(message.ToString(), 0.05f, 0.05f);
                     }
                 }
             }
