@@ -1,4 +1,4 @@
-﻿using Exiled.API.Interfaces;
+using Exiled.API.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -34,9 +34,12 @@ namespace UIURescueSquad
         [Description("UIU Player broadcast (null to disable it)")]
         public ushort UIUBroadcastTime { get; set; } = 10;
 
+
+
+
         [Description("UIU Soldier life (NTF CADET)")]
         public int UIUSoldierLife { get; set; } = 160;
-        [Description("The items UIUs soldiers spawn with.")]
+        [Description("The items UIUs soldiers spawn with")]
         public List<ItemType> UIUSoldierInventory { get; set; } = new List<ItemType>() { ItemType.KeycardNTFLieutenant, ItemType.GunProject90, ItemType.GunUSP, ItemType.Disarmer, ItemType.Medkit, ItemType.Adrenaline, ItemType.Radio, ItemType.GrenadeFrag };
 
         [Description("Ammo UIUs soldiers spawn with. (5.56, 7.62, 9mm)")]
@@ -44,23 +47,25 @@ namespace UIURescueSquad
         {
             80,0,100
         };
-
-        [Description("UIU Soldier Rank (THE BADGE ON THE LIST)")]
+        [Description("UIU Soldier Rank (instead of Nine-Tailed Fox Cadet role)")]
         public string UIUSoldierRank { get; set; } = "UIU Soldier";
+
+
 
         [Description("UIU Agent life (NTF LIEUTENANT)")]
         public int UIUAgentLife { get; set; } = 175;
-        [Description("The items UIUs agents spawn with.")]
+        [Description("The items UIUs agents spawn with")]
         public List<ItemType> UIUAgentInventory { get; set; } = new List<ItemType>() { ItemType.KeycardNTFLieutenant, ItemType.GunProject90, ItemType.GunUSP, ItemType.Disarmer, ItemType.Medkit, ItemType.Adrenaline, ItemType.Radio, ItemType.GrenadeFrag };
 
-        [Description("Ammo UIUs agents spawn with. (5.56, 7.62, 9mm)")]
+        [Description("Ammo UIUs agents spawn with (5.56, 7.62, 9mm)")]
         public List<uint> UIUAgentAmmo { get; set; } = new List<uint>
         {
             80,0,100
         };
-
-        [Description("UIU Agent Rank (THE BADGE ON THE LIST)")]
+        [Description("UIU Agent Rank (instead of Nine-Tailed Fox Lieutenant role)")]
         public string UIUAgentRank { get; set; } = "UIU Agent";
+
+
 
         [Description("UIU Leader life (NTF COMMANDER)")]
         public int UIULeaderLife { get; set; } = 215;
@@ -73,7 +78,7 @@ namespace UIURescueSquad
             80,0,100
         };
 
-        [Description("UIU Leader Rank (THE BADGE ON THE LIST)")]
+        [Description("UIU Leader Rank (instead of Nine-Tailed Fox Commander role)")]
         public string UIULeaderRank { get; set; } = "UIU Leader";
     }
 }
