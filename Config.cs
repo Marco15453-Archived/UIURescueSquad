@@ -77,7 +77,6 @@ namespace UIURescueSquad
         {
             80,0,100
         };
-
         [Description("UIU Leader Rank (instead of Nine-Tailed Fox Commander role)")]
         public string UIULeaderRank { get; set; } = "UIU Leader";
     }
