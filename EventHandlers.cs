@@ -140,7 +140,7 @@ namespace UIURescueSquad.Handlers
                 {
                     if (ev.ScpsLeft == 0)
                     {
-                        Cassie.GlitchyMessage(UIURescueSquad.Instance.Config.AnnouncmentCassieNoScp, 0.5f, 0.5f);
+                        Cassie.GlitchyMessage(UIURescueSquad.Instance.Config.AnnouncmentCassieNoScp, 0.05f, 0.05f);
                     }
 
                     else
