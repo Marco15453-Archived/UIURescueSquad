@@ -1,14 +1,20 @@
-using System.Text;
+﻿using System.Text;
+using System.Linq;
 using System.Collections.Generic;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using MEC;
 using UnityEngine;
+using Respawning;
+using Respawning.NamingRules;
 
 namespace UIURescueSquad.Handlers
 {
     public class EventHandlers
     {
+        private readonly UIURescueSquad plugin;
+        public EventHandlers(UIURescueSquad plugin) => this.plugin = plugin;
+
         public static bool isSpawnable;
 
         public static List<Player> uiuPlayers = new List<Player>();
@@ -19,7 +25,6 @@ namespace UIURescueSquad.Handlers
         private static System.Random rand = new System.Random();
 
         private static Vector3 SpawnPos = new Vector3(170, 985, 29);
-        //NOTE: Make spawnpos configurable
 
         public void OnWaitingForPlayers()
         {
@@ -27,10 +32,16 @@ namespace UIURescueSquad.Handlers
             respawns = 0;
         }
 
+        public void OnRoundStart()
+        {
+            if(!string.IsNullOrEmpty(plugin.Config.GuardUnitColor))
+                ChangeUnitColor(0, plugin.Config.GuardUnitColor);
+        }
+
         public void IsSpawnable()
         {
             randnums = rand.Next(1, 101);
-            if (randnums <= UIURescueSquad.Instance.Config.probability && respawns >= UIURescueSquad.Instance.Config.respawns) isSpawnable = true;
+            if (randnums <= plugin.Config.probability && respawns >= plugin.Config.respawns) isSpawnable = true;
             else isSpawnable = false;
         }
 
@@ -38,35 +49,31 @@ namespace UIURescueSquad.Handlers
         {
             if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
             {
-                //randnums = rand.Next(1, 101);
-                //Log.Info(randnums);
-                //if (randnums <= UIURescueSquad.Instance.Config.probability & respawns >= UIURescueSquad.Instance.Config.respawns)
                 if (isSpawnable)
                 {
-                    if (UIURescueSquad.Instance.Config.AnnouncementText != null)
+                    if (plugin.Config.AnnouncementText != null)
                     {
-                        if (UIURescueSquad.Instance.Config.AnnouncementText != null && UIURescueSquad.Instance.Config.AnnouncementText != null)
+                        if (plugin.Config.AnnouncementText != null && plugin.Config.AnnouncementText != null)
                         {
                             Map.ClearBroadcasts();
-                            Map.Broadcast(UIURescueSquad.Instance.Config.AnnouncementTime, UIURescueSquad.Instance.Config.AnnouncementText);
+                            Map.Broadcast(plugin.Config.AnnouncementTime, plugin.Config.AnnouncementText);
                         }
                     }
-                    //Cassie.Message("Attention, the U I U HasEntered please help the MtfUnit that are AwaitingRecontainment .g7 ScpSubjects", true, true);
-                    //NOTE: disable MTF entrance message to allow cassie messages
+
                     foreach (Player player in ev.Players)
                     {
                         uiuPlayers.Add(player);
 
-                        if (UIURescueSquad.Instance.Config.UIUBroadcast != null && UIURescueSquad.Instance.Config.UIUBroadcastTime.ToString() != null)
+                        if (plugin.Config.UIUBroadcast != null && plugin.Config.UIUBroadcastTime.ToString() != null)
                         {
-                            if (UIURescueSquad.Instance.Config.UseHintsHere)
+                            if (plugin.Config.UseHintsHere)
                             {
-                                player.ShowHint(UIURescueSquad.Instance.Config.UIUBroadcast, UIURescueSquad.Instance.Config.UIUBroadcastTime);
+                                player.ShowHint(plugin.Config.UIUBroadcast, plugin.Config.UIUBroadcastTime);
                             }
                             else
                             {
                                 player.ClearBroadcasts();
-                                player.Broadcast(UIURescueSquad.Instance.Config.UIUBroadcastTime, UIURescueSquad.Instance.Config.UIUBroadcast);
+                                player.Broadcast(plugin.Config.UIUBroadcastTime, plugin.Config.UIUBroadcast);
                             }
                         }
 
@@ -76,49 +83,49 @@ namespace UIURescueSquad.Handlers
                             {
                                 case RoleType.NtfCadet:
                                     {
-                                        player.Health = UIURescueSquad.Instance.Config.UIUSoldierLife;
+                                        player.Health = plugin.Config.UIUSoldierLife;
 
-                                        player.ResetInventory(UIURescueSquad.Instance.Config.UIUSoldierInventory);
+                                        player.ResetInventory(plugin.Config.UIUSoldierInventory);
 
                                         for (int i = 0; i < 3; i++)
                                         {
-                                            player.Ammo[i] = UIURescueSquad.Instance.Config.UIUSoldierAmmo[i];
+                                            player.Ammo[i] = plugin.Config.UIUSoldierAmmo[i];
                                         }
 
                                         player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Role;
-                                        player.CustomInfo = UIURescueSquad.Instance.Config.UIUSoldierRank;
+                                        player.CustomInfo = plugin.Config.UIUSoldierRank;
                                         break;
                                     }
 
                                 case RoleType.NtfLieutenant:
                                     {
-                                        player.Health = UIURescueSquad.Instance.Config.UIUAgentLife;
+                                        player.Health = plugin.Config.UIUAgentLife;
 
-                                        player.ResetInventory(UIURescueSquad.Instance.Config.UIUAgentInventory);
+                                        player.ResetInventory(plugin.Config.UIUAgentInventory);
 
                                         for (int i = 0; i < 3; i++)
                                         {
-                                            player.Ammo[i] = UIURescueSquad.Instance.Config.UIUAgentAmmo[i];
+                                            player.Ammo[i] = plugin.Config.UIUAgentAmmo[i];
                                         }
 
                                         player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Role;
-                                        player.CustomInfo = UIURescueSquad.Instance.Config.UIUAgentRank;
+                                        player.CustomInfo = plugin.Config.UIUAgentRank;
                                         break;
                                     }
 
                                 case RoleType.NtfCommander:
                                     {
-                                        player.Health = UIURescueSquad.Instance.Config.UIULeaderLife;
+                                        player.Health = plugin.Config.UIULeaderLife;
 
-                                        player.ResetInventory(UIURescueSquad.Instance.Config.UIULeaderInventory);
+                                        player.ResetInventory(plugin.Config.UIULeaderInventory);
 
                                         for (int i = 0; i < 3; i++)
                                         {
-                                            player.Ammo[i] = UIURescueSquad.Instance.Config.UIULeaderAmmo[i];
+                                            player.Ammo[i] = plugin.Config.UIULeaderAmmo[i];
                                         }
 
                                         player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Role;
-                                        player.CustomInfo = UIURescueSquad.Instance.Config.UIULeaderRank;
+                                        player.CustomInfo = plugin.Config.UIULeaderRank;
                                         break;
                                     }
                             }
@@ -132,24 +139,32 @@ namespace UIURescueSquad.Handlers
 
         public void OnAnnouncingMTF(AnnouncingNtfEntranceEventArgs ev)
         {
-            if (isSpawnable && respawns >= UIURescueSquad.Instance.Config.respawns + 1)
+            if(!isSpawnable)
             {
+                if(!string.IsNullOrEmpty(plugin.Config.NtfUnitColor))
+                    ChangeUnitColor(respawns, plugin.Config.NtfUnitColor);
+            }
+
+            if (isSpawnable && respawns >= plugin.Config.respawns + 1)
+            {
+                if(!string.IsNullOrEmpty(plugin.Config.UiuUnitColor))
+                    ChangeUnitColor(respawns, plugin.Config.UiuUnitColor);
+
                 ev.IsAllowed = false;
 
-                if (UIURescueSquad.Instance.Config.DisableNTFAnnounce)
+                if (plugin.Config.DisableNTFAnnounce)
                 {
                     if (ev.ScpsLeft == 0)
                     {
-                        Cassie.GlitchyMessage(UIURescueSquad.Instance.Config.AnnouncmentCassieNoScp, 0.05f, 0.05f);
+                        Cassie.GlitchyMessage(plugin.Config.AnnouncmentCassieNoScp, 0.05f, 0.05f);
                     }
-
                     else
                     {
                         StringBuilder message = new StringBuilder();
 
-                        message.Append(UIURescueSquad.Instance.Config.AnnouncementCassie);
+                        message.Append(plugin.Config.AnnouncementCassie);
                         message.Replace("{scpnum}", $"{ev.ScpsLeft} scpsubject");
-                        if (ev.ScpsLeft > 1) message.Append("s");
+                        if (ev.ScpsLeft > 1) message.Replace("scpsubject", "scpsubjects");
 
                         Cassie.GlitchyMessage(message.ToString(), 0.05f, 0.05f);
                     }
@@ -160,7 +175,7 @@ namespace UIURescueSquad.Handlers
 
 
 
-        public void OnLeft(LeftEventArgs ev)
+        public void OnLeft(DestroyingEventArgs ev)
         {
             if (uiuPlayers.Contains(ev.Player))
             {
@@ -190,6 +205,24 @@ namespace UIURescueSquad.Handlers
             player.ReferenceHub.nicknameSync.ShownPlayerInfo |= PlayerInfoArea.Role;
 
             uiuPlayers.Remove(player);
+        }
+
+
+
+
+        //Thank you sanyae2439 for helping me (me as Michal78900) in making this code below!
+
+        public void ChangeUnitColor(int index, string color)
+        {
+            var Unit = RespawnManager.Singleton.NamingManager.AllUnitNames[index].UnitName;
+
+            RespawnManager.Singleton.NamingManager.AllUnitNames.Remove(RespawnManager.Singleton.NamingManager.AllUnitNames[index]);
+            UnitNamingRules.AllNamingRules[SpawnableTeamType.NineTailedFox].AddCombination($"<color={color}>{Unit}</color>", SpawnableTeamType.NineTailedFox);
+
+            foreach (var ply in Player.List.Where(x => x.ReferenceHub.characterClassManager.CurUnitName == Unit))
+            {
+                ply.ReferenceHub.characterClassManager.NetworkCurUnitName = $"<color={color}>{Unit}</color>";
+            }
         }
     }
 }

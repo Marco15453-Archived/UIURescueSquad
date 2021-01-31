@@ -11,8 +11,7 @@ namespace UIURescueSquad
 {
     public class UIURescueSquad : Plugin<Config>
     {
-        private static readonly Lazy<UIURescueSquad> LazyInstance = new Lazy<UIURescueSquad>(() => new UIURescueSquad());
-        public static UIURescueSquad Instance => LazyInstance.Value;
+        public static UIURescueSquad Singleton;
 
         private Harmony hInstance;
 
@@ -20,7 +19,6 @@ namespace UIURescueSquad
         public override string Author { get; } = "JesusQC";
         public override string Prefix { get; } = "UIURescueSquad";
 
-        private UIURescueSquad() { }
 
         public EventHandlers EventHandlers;
 
@@ -28,17 +26,20 @@ namespace UIURescueSquad
         {
             base.OnEnabled();
 
+            Singleton = this;
+
             hInstance = new Harmony("jesus.uiurescuesquad");
             hInstance.PatchAll();
 
-            EventHandlers = new EventHandlers();
+            EventHandlers = new EventHandlers(this);
 
             MapEvent.AnnouncingNtfEntrance += EventHandlers.OnAnnouncingMTF;
 
             ServerEvent.RespawningTeam += EventHandlers.OnTeamRespawn;
             ServerEvent.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
+            ServerEvent.RoundStarted += EventHandlers.OnRoundStart;
 
-            PlayerEvent.Left += EventHandlers.OnLeft;
+            PlayerEvent.Destroying += EventHandlers.OnLeft;
             PlayerEvent.ChangingRole += EventHandlers.OnChanging;
             PlayerEvent.Died += EventHandlers.OnDying;
         }
@@ -50,8 +51,9 @@ namespace UIURescueSquad
 
             ServerEvent.RespawningTeam -= EventHandlers.OnTeamRespawn;
             ServerEvent.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
+            ServerEvent.RoundStarted -= EventHandlers.OnRoundStart;
 
-            PlayerEvent.Left -= EventHandlers.OnLeft;
+            PlayerEvent.Destroying -= EventHandlers.OnLeft;
             PlayerEvent.ChangingRole -= EventHandlers.OnChanging;
             PlayerEvent.Died -= EventHandlers.OnDying;
 
