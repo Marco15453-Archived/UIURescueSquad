@@ -85,4 +85,8 @@ UIURescueSquad:
   - 100
   # UIU Leader Rank (instead of Nine-Tailed Fox Commander role)
   u_i_u_leader_rank: UIU Leader
+  # Should plugin change colors for units? (leave empty for default color)
+  guard_unit_color: '#797D7F'
+  ntf_unit_color: '#0887E5'
+  uiu_unit_color: yellow
 ```
