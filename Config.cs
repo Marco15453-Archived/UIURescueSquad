@@ -1,4 +1,4 @@
-using Exiled.API.Interfaces;
+﻿using Exiled.API.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -79,5 +79,11 @@ namespace UIURescueSquad
         };
         [Description("UIU Leader Rank (instead of Nine-Tailed Fox Commander role)")]
         public string UIULeaderRank { get; set; } = "UIU Leader";
+
+        [Description("Should plugin change colors for units? (leave empty for default color)")]
+        public string GuardUnitColor { get; set; } = "#797D7F";
+        public string NtfUnitColor { get; set; } = "#0887E5";
+        public string UiuUnitColor { get; set; } = "yellow";
+
     }
 }
