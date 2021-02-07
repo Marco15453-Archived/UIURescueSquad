@@ -13,7 +13,10 @@ namespace UIURescueSquad
         public int respawns { get; set; } = 1;
         [Description("Probability of a UIU Squad replacing a MTF spawn")]
         public int probability { get; set; } = 50;
-
+        [Description("Spawn position")]
+        public float spawnPosX { get; set; } = 170.0f;
+        public float spawnPosY { get; set; } = 985.0f;
+        public float spawnPosZ { get; set; } = 29.0f;
 
         [Description("Entrance broadcast announcement message (null to disable it)")]
         public string AnnouncementText { get; set; } = "<b>The <color=#FFFA4B>UIU Rescue Squad</color> has arrived to the facility</b>";

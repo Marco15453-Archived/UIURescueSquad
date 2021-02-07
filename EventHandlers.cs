@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using MEC;
-using UnityEngine;
 using Respawning;
 using Respawning.NamingRules;
+using UnityEngine;
 
 namespace UIURescueSquad.Handlers
 {
@@ -23,8 +23,6 @@ namespace UIURescueSquad.Handlers
         private int randnums;
 
         private static System.Random rand = new System.Random();
-
-        private static Vector3 SpawnPos = new Vector3(170, 985, 29);
 
         public void OnWaitingForPlayers()
         {
@@ -47,7 +45,7 @@ namespace UIURescueSquad.Handlers
 
         public void OnTeamRespawn(RespawningTeamEventArgs ev)
         {
-            if (ev.NextKnownTeam == Respawning.SpawnableTeamType.NineTailedFox)
+            if (ev.NextKnownTeam == SpawnableTeamType.NineTailedFox)
             {
                 if (isSpawnable)
                 {
@@ -129,7 +127,7 @@ namespace UIURescueSquad.Handlers
                                         break;
                                     }
                             }
-                            Timing.CallDelayed(0.4f, () => { player.Position = SpawnPos; });
+                            Timing.CallDelayed(0.4f, () => { player.Position = new Vector3(plugin.Config.spawnPosX, plugin.Config.spawnPosY, plugin.Config.spawnPosZ); });
                         });
                     }
                 }
@@ -172,9 +170,6 @@ namespace UIURescueSquad.Handlers
             }
         }
 
-
-
-
         public void OnLeft(DestroyingEventArgs ev)
         {
             if (uiuPlayers.Contains(ev.Player))
@@ -198,7 +193,6 @@ namespace UIURescueSquad.Handlers
             }
         }
 
-
         public void KillUIU(Player player)
         {
             player.CustomInfo = string.Empty;
@@ -207,11 +201,7 @@ namespace UIURescueSquad.Handlers
             uiuPlayers.Remove(player);
         }
 
-
-
-
         //Thank you sanyae2439 for helping me (me as Michal78900) in making this code below!
-
         public void ChangeUnitColor(int index, string color)
         {
             var Unit = RespawnManager.Singleton.NamingManager.AllUnitNames[index].UnitName;
