@@ -170,7 +170,7 @@ namespace UIURescueSquad.Handlers
             }
         }
 
-        public void OnLeft(DestroyingEventArgs ev)
+        public void OnDestroy(DestroyingEventArgs ev)
         {
             if (uiuPlayers.Contains(ev.Player))
             {

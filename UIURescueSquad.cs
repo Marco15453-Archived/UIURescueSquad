@@ -40,7 +40,7 @@ namespace UIURescueSquad
             ServerEvent.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
             ServerEvent.RoundStarted += EventHandlers.OnRoundStart;
 
-            PlayerEvent.Destroying += EventHandlers.OnLeft;
+            PlayerEvent.Destroying += EventHandlers.OnDestroy;
             PlayerEvent.ChangingRole += EventHandlers.OnChanging;
             PlayerEvent.Died += EventHandlers.OnDying;
         }
@@ -54,7 +54,7 @@ namespace UIURescueSquad
             ServerEvent.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
             ServerEvent.RoundStarted -= EventHandlers.OnRoundStart;
 
-            PlayerEvent.Destroying -= EventHandlers.OnLeft;
+            PlayerEvent.Destroying -= EventHandlers.OnDestroy;
             PlayerEvent.ChangingRole -= EventHandlers.OnChanging;
             PlayerEvent.Died -= EventHandlers.OnDying;
 
