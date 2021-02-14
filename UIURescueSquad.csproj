@@ -42,7 +42,8 @@
       <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
     <Reference Include="Exiled.API, Version=2.1.30.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>packages\EXILED.2.1.30\lib\net472\Exiled.API.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\Games\Coding\exiled\EXILED\Exiled.API\obj\Debug\Exiled.API.dll</HintPath>
     </Reference>
     <Reference Include="Exiled.Bootstrap, Version=2.1.30.0, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>packages\EXILED.2.1.30\lib\net472\Exiled.Bootstrap.dll</HintPath>

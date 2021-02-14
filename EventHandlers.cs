@@ -7,6 +7,7 @@ using MEC;
 using Respawning;
 using Respawning.NamingRules;
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 namespace UIURescueSquad.Handlers
 {
@@ -211,7 +212,14 @@ namespace UIURescueSquad.Handlers
 
             foreach (var ply in Player.List.Where(x => x.ReferenceHub.characterClassManager.CurUnitName == Unit))
             {
-                ply.ReferenceHub.characterClassManager.NetworkCurUnitName = $"<color={color}>{Unit}</color>";
+                if (Unit.Contains("<color"))
+                {
+                    Regex regex = new Regex("<color=(.*)>(.*)</color>");
+                    var v = regex.Match(Unit);
+                    string s = v.Groups[1].ToString();
+                    ply.ReferenceHub.characterClassManager.NetworkCurUnitName = Unit.Replace(s, color);
+                }
+                else ply.ReferenceHub.characterClassManager.NetworkCurUnitName = $"<color={color}>{Unit}</color>";
             }
         }
     }

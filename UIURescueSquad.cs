@@ -20,7 +20,6 @@ namespace UIURescueSquad
         public override Version Version { get; } = new Version(2, 0);
         public override Version RequiredExiledVersion => new Version(2, 1, 30);
 
-
         public EventHandlers EventHandlers;
 
         public override void OnEnabled()
@@ -29,7 +28,7 @@ namespace UIURescueSquad
 
             Singleton = this;
 
-            hInstance = new Harmony("jesus.uiurescuesquad");
+            hInstance = new Harmony($"jesus.uiurescuesquad-{DateTime.Now.Ticks}");
             hInstance.PatchAll();
 
             EventHandlers = new EventHandlers(this);
