@@ -8,6 +8,7 @@ using Respawning;
 using Respawning.NamingRules;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 
 namespace UIURescueSquad.Handlers
 {
@@ -33,15 +34,20 @@ namespace UIURescueSquad.Handlers
 
         public void OnRoundStart()
         {
-            if(!string.IsNullOrEmpty(plugin.Config.GuardUnitColor))
-                ChangeUnitColor(0, plugin.Config.GuardUnitColor);
+            if (!string.IsNullOrEmpty(plugin.Config.GuardUnitColor))
+                Map.ChangeUnitColor(0, plugin.Config.GuardUnitColor);
         }
 
         public void IsSpawnable()
         {
             randnums = rand.Next(1, 101);
-            if (randnums <= plugin.Config.probability && respawns >= plugin.Config.respawns) isSpawnable = true;
-            else isSpawnable = false;
+            if (randnums <= plugin.Config.probability && respawns >= plugin.Config.respawns)
+                isSpawnable = true;
+            else
+                isSpawnable = false;
+
+            if (UIURescueSquad.assemblySH != null)
+                SerpentsHandTeam(isSpawnable);
         }
 
         public void OnTeamRespawn(RespawningTeamEventArgs ev)
@@ -78,6 +84,9 @@ namespace UIURescueSquad.Handlers
 
                         Timing.CallDelayed(0.01f, () =>
                         {
+                            player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Nickname;
+                            player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Role;
+
                             switch (player.Role)
                             {
                                 case RoleType.NtfCadet:
@@ -91,8 +100,7 @@ namespace UIURescueSquad.Handlers
                                             player.Ammo[i] = plugin.Config.UIUSoldierAmmo[i];
                                         }
 
-                                        player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Role;
-                                        player.CustomInfo = plugin.Config.UIUSoldierRank;
+                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UIUSoldierRank}";
                                         break;
                                     }
 
@@ -107,8 +115,7 @@ namespace UIURescueSquad.Handlers
                                             player.Ammo[i] = plugin.Config.UIUAgentAmmo[i];
                                         }
 
-                                        player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Role;
-                                        player.CustomInfo = plugin.Config.UIUAgentRank;
+                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UIUAgentRank}";
                                         break;
                                     }
 
@@ -123,8 +130,7 @@ namespace UIURescueSquad.Handlers
                                             player.Ammo[i] = plugin.Config.UIULeaderAmmo[i];
                                         }
 
-                                        player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Role;
-                                        player.CustomInfo = plugin.Config.UIULeaderRank;
+                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UIULeaderRank}";
                                         break;
                                     }
                             }
@@ -138,37 +144,66 @@ namespace UIURescueSquad.Handlers
 
         public void OnAnnouncingMTF(AnnouncingNtfEntranceEventArgs ev)
         {
-            if(!isSpawnable)
+            string cassieMessage = string.Empty;
+
+
+            if (!isSpawnable) //NTF Spawn
             {
-                if(!string.IsNullOrEmpty(plugin.Config.NtfUnitColor))
-                    ChangeUnitColor(respawns, plugin.Config.NtfUnitColor);
-            }
+                if (!string.IsNullOrEmpty(plugin.Config.NtfUnitColor))
+                    Map.ChangeUnitColor(respawns, plugin.Config.NtfUnitColor);
 
-            if (isSpawnable && respawns >= plugin.Config.respawns + 1)
-            {
-                if(!string.IsNullOrEmpty(plugin.Config.UiuUnitColor))
-                    ChangeUnitColor(respawns, plugin.Config.UiuUnitColor);
 
-                ev.IsAllowed = false;
-
-                if (plugin.Config.DisableNTFAnnounce)
+                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.ntfAnnouncmentCassieNoScp))
                 {
-                    if (ev.ScpsLeft == 0)
-                    {
-                        Cassie.GlitchyMessage(plugin.Config.AnnouncmentCassieNoScp, 0.05f, 0.05f);
-                    }
-                    else
-                    {
-                        StringBuilder message = new StringBuilder();
+                    ev.IsAllowed = false;
 
-                        message.Append(plugin.Config.AnnouncementCassie);
-                        message.Replace("{scpnum}", $"{ev.ScpsLeft} scpsubject");
-                        if (ev.ScpsLeft > 1) message.Replace("scpsubject", "scpsubjects");
+                    cassieMessage = plugin.Config.ntfAnnouncmentCassieNoScp;
+                }
 
-                        Cassie.GlitchyMessage(message.ToString(), 0.05f, 0.05f);
-                    }
+                else
+
+                if (!string.IsNullOrEmpty(plugin.Config.ntfAnnouncementCassie))
+                {
+                    ev.IsAllowed = false;
+
+                    cassieMessage = plugin.Config.ntfAnnouncementCassie;
                 }
             }
+
+
+            if (isSpawnable && respawns >= plugin.Config.respawns + 1) //UIU spawn
+            {
+                if (!string.IsNullOrEmpty(plugin.Config.UiuUnitColor))
+                    Map.ChangeUnitColor(respawns, plugin.Config.UiuUnitColor);
+
+
+
+                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.uiuAnnouncmentCassieNoScp))
+                {
+                    ev.IsAllowed = false;
+
+                    cassieMessage = plugin.Config.uiuAnnouncmentCassieNoScp;
+                }
+
+                else
+
+                if (!string.IsNullOrEmpty(plugin.Config.uiuAnnouncementCassie))
+                {
+                    ev.IsAllowed = false;
+
+                    cassieMessage = plugin.Config.uiuAnnouncementCassie;
+                }
+
+            }
+
+
+            cassieMessage = cassieMessage.Replace("{scpnum}", $"{ev.ScpsLeft} scpsubject");
+            if (ev.ScpsLeft > 1) cassieMessage = cassieMessage.Replace("scpsubject", "scpsubjects");
+
+            cassieMessage = cassieMessage.Replace("{designation}", $"nato_{ev.UnitName[0]} {ev.UnitNumber}");
+
+            if (!string.IsNullOrEmpty(cassieMessage))
+                Cassie.GlitchyMessage(cassieMessage, 0.05f, 0.05f);
         }
 
         public void OnDestroy(DestroyingEventArgs ev)
@@ -197,30 +232,46 @@ namespace UIURescueSquad.Handlers
         public void KillUIU(Player player)
         {
             player.CustomInfo = string.Empty;
+            player.ReferenceHub.nicknameSync.ShownPlayerInfo |= PlayerInfoArea.Nickname;
             player.ReferenceHub.nicknameSync.ShownPlayerInfo |= PlayerInfoArea.Role;
 
             uiuPlayers.Remove(player);
         }
 
-        //Thank you sanyae2439 for helping me (me as Michal78900) in making this code below!
-        public void ChangeUnitColor(int index, string color)
+        public void SerpentsHandTeam(bool uiuIsSpawnable)
         {
-            var Unit = RespawnManager.Singleton.NamingManager.AllUnitNames[index].UnitName;
-
-            RespawnManager.Singleton.NamingManager.AllUnitNames.Remove(RespawnManager.Singleton.NamingManager.AllUnitNames[index]);
-            UnitNamingRules.AllNamingRules[SpawnableTeamType.NineTailedFox].AddCombination($"<color={color}>{Unit}</color>", SpawnableTeamType.NineTailedFox);
-
-            foreach (var ply in Player.List.Where(x => x.ReferenceHub.characterClassManager.CurUnitName == Unit))
+            if (!SerpentsHand.EventHandlers.isSpawnable)
             {
-                if (Unit.Contains("<color"))
-                {
-                    Regex regex = new Regex("<color=(.*)>(.*)</color>");
-                    var v = regex.Match(Unit);
-                    string s = v.Groups[1].ToString();
-                    ply.ReferenceHub.characterClassManager.NetworkCurUnitName = Unit.Replace(s, color);
-                }
-                else ply.ReferenceHub.characterClassManager.NetworkCurUnitName = $"<color={color}>{Unit}</color>";
+                Log.Debug("Serpents Hand is not spawnable right now. Returning...", plugin.Config.Debug);
+                return;
             }
+
+            if (Respawn.NextKnownTeam == SpawnableTeamType.NineTailedFox)
+            {
+                if (!uiuIsSpawnable)
+                {
+                    Log.Debug("UIU is not spawnable right now. Returning...");
+                    return;
+                }
+
+                else
+                {
+                    if (rand.Next(0, 2) == 0)
+                    {
+                        SerpentsHand.EventHandlers.isSpawnable = true;
+                        isSpawnable = false;
+                    }
+                    else
+                    {
+                        SerpentsHand.EventHandlers.isSpawnable = false;
+                        isSpawnable = true;
+                    }
+                }
+            }
+            Log.Debug($"Serpents Hand is spawnable: {SerpentsHand.EventHandlers.isSpawnable}", plugin.Config.Debug);
+            Log.Debug($"UIU is spawnable: {isSpawnable}", plugin.Config.Debug);
         }
+
+        //There was a piece of code, but now it is EXILED feature
     }
 }
