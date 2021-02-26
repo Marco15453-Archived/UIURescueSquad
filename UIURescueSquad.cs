@@ -2,7 +2,6 @@
 using Exiled.API.Features;
 using UIURescueSquad.Handlers;
 using HarmonyLib;
-
 using PlayerEvent = Exiled.Events.Handlers.Player;
 using ServerEvent = Exiled.Events.Handlers.Server;
 using MapEvent = Exiled.Events.Handlers.Map;
@@ -18,7 +17,8 @@ namespace UIURescueSquad
         public override string Name { get; } = "UIU Rescue Squad";
         public override string Author { get; } = "JesusQC";
         public override string Prefix { get; } = "UIURescueSquad";
-
+        public override Version Version { get; } = new Version(2, 0);
+        public override Version RequiredExiledVersion => new Version(2, 1, 30);
 
         public EventHandlers EventHandlers;
 
@@ -28,7 +28,7 @@ namespace UIURescueSquad
 
             Singleton = this;
 
-            hInstance = new Harmony("jesus.uiurescuesquad");
+            hInstance = new Harmony($"jesus.uiurescuesquad-{DateTime.Now.Ticks}");
             hInstance.PatchAll();
 
             EventHandlers = new EventHandlers(this);
@@ -39,7 +39,7 @@ namespace UIURescueSquad
             ServerEvent.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
             ServerEvent.RoundStarted += EventHandlers.OnRoundStart;
 
-            PlayerEvent.Destroying += EventHandlers.OnLeft;
+            PlayerEvent.Destroying += EventHandlers.OnDestroy;
             PlayerEvent.ChangingRole += EventHandlers.OnChanging;
             PlayerEvent.Died += EventHandlers.OnDying;
         }
@@ -53,7 +53,7 @@ namespace UIURescueSquad
             ServerEvent.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
             ServerEvent.RoundStarted -= EventHandlers.OnRoundStart;
 
-            PlayerEvent.Destroying -= EventHandlers.OnLeft;
+            PlayerEvent.Destroying -= EventHandlers.OnDestroy;
             PlayerEvent.ChangingRole -= EventHandlers.OnChanging;
             PlayerEvent.Died -= EventHandlers.OnDying;
 
