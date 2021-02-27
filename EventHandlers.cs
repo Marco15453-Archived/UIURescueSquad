@@ -47,7 +47,7 @@ namespace UIURescueSquad.Handlers
                 isSpawnable = false;
 
             if (UIURescueSquad.assemblySH != null)
-                SerpentsHandTeam(isSpawnable);
+                SerpentsHandTeam();
         }
 
         public void OnTeamRespawn(RespawningTeamEventArgs ev)
@@ -63,6 +63,17 @@ namespace UIURescueSquad.Handlers
                             Map.ClearBroadcasts();
                             Map.Broadcast(plugin.Config.AnnouncementTime, plugin.Config.AnnouncementText);
                         }
+                    }
+
+                    List<Player> UIUPlayers = new List<Player>();
+                    List<Player> NTFPlayers = new List<Player>(ev.Players);
+
+                    ev.Players.Clear();
+                    for (int i = 0; i < plugin.Config.MaxSquad && NTFPlayers.Count > 0; i++)
+                    {
+                        Player player = NTFPlayers[rand.Next(NTFPlayers.Count)];
+                        NTFPlayers.Remove(player);
+                        ev.Players.Add(player);
                     }
 
                     foreach (Player player in ev.Players)
@@ -149,10 +160,6 @@ namespace UIURescueSquad.Handlers
 
             if (!isSpawnable) //NTF Spawn
             {
-                if (!string.IsNullOrEmpty(plugin.Config.NtfUnitColor))
-                    Map.ChangeUnitColor(respawns, plugin.Config.NtfUnitColor);
-
-
                 if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.ntfAnnouncmentCassieNoScp))
                 {
                     ev.IsAllowed = false;
@@ -168,16 +175,14 @@ namespace UIURescueSquad.Handlers
 
                     cassieMessage = plugin.Config.ntfAnnouncementCassie;
                 }
+
+                if (!string.IsNullOrEmpty(plugin.Config.NtfUnitColor))
+                    Map.ChangeUnitColor(respawns, plugin.Config.NtfUnitColor);
             }
 
 
             if (isSpawnable && respawns >= plugin.Config.respawns + 1) //UIU spawn
             {
-                if (!string.IsNullOrEmpty(plugin.Config.UiuUnitColor))
-                    Map.ChangeUnitColor(respawns, plugin.Config.UiuUnitColor);
-
-
-
                 if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.uiuAnnouncmentCassieNoScp))
                 {
                     ev.IsAllowed = false;
@@ -194,6 +199,8 @@ namespace UIURescueSquad.Handlers
                     cassieMessage = plugin.Config.uiuAnnouncementCassie;
                 }
 
+                if (!string.IsNullOrEmpty(plugin.Config.UiuUnitColor))
+                    Map.ChangeUnitColor(respawns, plugin.Config.UiuUnitColor);
             }
 
 
@@ -238,35 +245,39 @@ namespace UIURescueSquad.Handlers
             uiuPlayers.Remove(player);
         }
 
-        public void SerpentsHandTeam(bool uiuIsSpawnable)
+        public void SerpentsHandTeam()
         {
+            if (!isSpawnable)
+            {
+                Log.Debug("UIU is not spawnable right now. Returning...", plugin.Config.Debug);
+                Timing.CallDelayed(1f, () =>
+                {
+                    isSpawnable = false;
+                    return;
+                });
+            }
+
             if (!SerpentsHand.EventHandlers.isSpawnable)
             {
                 Log.Debug("Serpents Hand is not spawnable right now. Returning...", plugin.Config.Debug);
-                return;
+                Timing.CallDelayed(1f, () =>
+                {
+                    SerpentsHand.EventHandlers.isSpawnable = false;
+                    return;
+                });
             }
 
-            if (Respawn.NextKnownTeam == SpawnableTeamType.NineTailedFox)
-            {
-                if (!uiuIsSpawnable)
-                {
-                    Log.Debug("UIU is not spawnable right now. Returning...");
-                    return;
-                }
 
-                else
-                {
-                    if (rand.Next(0, 2) == 0)
-                    {
-                        SerpentsHand.EventHandlers.isSpawnable = true;
-                        isSpawnable = false;
-                    }
-                    else
-                    {
-                        SerpentsHand.EventHandlers.isSpawnable = false;
-                        isSpawnable = true;
-                    }
-                }
+            if (rand.Next(0, 2) == 0)
+            {
+                SerpentsHand.EventHandlers.isSpawnable = true;
+                isSpawnable = false;
+            }
+
+            else
+            {
+                SerpentsHand.EventHandlers.isSpawnable = false;
+                isSpawnable = true;
             }
             Log.Debug($"Serpents Hand is spawnable: {SerpentsHand.EventHandlers.isSpawnable}", plugin.Config.Debug);
             Log.Debug($"UIU is spawnable: {isSpawnable}", plugin.Config.Debug);

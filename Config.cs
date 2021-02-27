@@ -9,13 +9,20 @@ namespace UIURescueSquad
         [Description("Is the plugin enabled?")]
         public bool IsEnabled { get; set; } = true;
 
-        [Description("Should debug messages be shown in a server console.")]
+        [Description("Should debug messages be shown in a server console")]
         public bool Debug { get; set; } = false;
+
 
         [Description("How many mtfs respawns must have happened to spawn UIU")]
         public int respawns { get; set; } = 1;
+
         [Description("Probability of a UIU Squad replacing a MTF spawn")]
         public int probability { get; set; } = 50;
+
+        [Description("The maximum size of a UIU squad")]
+        public int MaxSquad { get; set; } = 8;
+
+
         [Description("Spawn position")]
         public float spawnPosX { get; set; } = 170.0f;
         public float spawnPosY { get; set; } = 985.0f;
