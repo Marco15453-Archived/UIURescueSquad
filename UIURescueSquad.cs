@@ -5,6 +5,9 @@ using HarmonyLib;
 using PlayerEvent = Exiled.Events.Handlers.Player;
 using ServerEvent = Exiled.Events.Handlers.Server;
 using MapEvent = Exiled.Events.Handlers.Map;
+using Exiled.API.Interfaces;
+using Exiled.Loader;
+using System.Reflection;
 
 namespace UIURescueSquad
 {
@@ -14,18 +17,18 @@ namespace UIURescueSquad
 
         private Harmony hInstance;
 
+        public static Assembly assemblySH;
+
         public override string Name { get; } = "UIU Rescue Squad";
         public override string Author { get; } = "JesusQC";
         public override string Prefix { get; } = "UIURescueSquad";
-        public override Version Version { get; } = new Version(2, 0);
-        public override Version RequiredExiledVersion => new Version(2, 1, 30);
+        public override Version Version { get; } = new Version(2, 1, 0);
+        public override Version RequiredExiledVersion => new Version(2, 3, 3);
 
         public EventHandlers EventHandlers;
 
         public override void OnEnabled()
         {
-            base.OnEnabled();
-
             Singleton = this;
 
             hInstance = new Harmony($"jesus.uiurescuesquad-{DateTime.Now.Ticks}");
@@ -42,11 +45,20 @@ namespace UIURescueSquad
             PlayerEvent.Destroying += EventHandlers.OnDestroy;
             PlayerEvent.ChangingRole += EventHandlers.OnChanging;
             PlayerEvent.Died += EventHandlers.OnDying;
+
+            foreach (IPlugin<IConfig> plugin in Loader.Plugins)
+            {
+                if (plugin.Name == "SerpentsHand" && plugin.Config.IsEnabled)
+                {
+                    assemblySH = plugin.Assembly;
+                    Log.Debug("SerpentsHand plugin detected!", Config.Debug);
+                }
+            }
+
+            base.OnEnabled();
         }
         public override void OnDisabled()
         {
-            base.OnDisabled();
-
             MapEvent.AnnouncingNtfEntrance -= EventHandlers.OnAnnouncingMTF;
 
             ServerEvent.RespawningTeam -= EventHandlers.OnTeamRespawn;
@@ -59,6 +71,9 @@ namespace UIURescueSquad
 
             hInstance.UnpatchAll();
             EventHandlers = null;
+            Singleton = null;
+
+            base.OnDisabled();
         }
     }
 }

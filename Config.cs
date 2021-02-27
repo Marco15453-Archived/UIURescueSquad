@@ -9,10 +9,20 @@ namespace UIURescueSquad
         [Description("Is the plugin enabled?")]
         public bool IsEnabled { get; set; } = true;
 
+        [Description("Should debug messages be shown in a server console")]
+        public bool Debug { get; set; } = false;
+
+
         [Description("How many mtfs respawns must have happened to spawn UIU")]
         public int respawns { get; set; } = 1;
+
         [Description("Probability of a UIU Squad replacing a MTF spawn")]
         public int probability { get; set; } = 50;
+
+        [Description("The maximum size of a UIU squad")]
+        public int MaxSquad { get; set; } = 8;
+
+
         [Description("Spawn position")]
         public float spawnPosX { get; set; } = 170.0f;
         public float spawnPosY { get; set; } = 985.0f;
@@ -23,11 +33,16 @@ namespace UIURescueSquad
         [Description("Entrance broadcast announcement message time")]
         public ushort AnnouncementTime { get; set; } = 10;
 
-        [Description("Disable NTF default Announce")]
-        public bool DisableNTFAnnounce { get; set; } = true;
-        [Description("**ONLY WORKS IF DisableNTFAnnounce = true** Entrance Cassie Message")]
-        public string AnnouncementCassie { get; set; } = "The U I U Squad HasEntered AwaitingRecontainment {scpnum}";
-        public string AnnouncmentCassieNoScp { get; set; } = "The U I U Squad HasEntered NoSCPsLeft";
+        
+        [Description("UIU entrance Cassie Message")]
+        public string uiuAnnouncementCassie { get; set; } = "The U I U Squad HasEntered AwaitingRecontainment {scpnum}";
+        public string uiuAnnouncmentCassieNoScp { get; set; } = "The U I U Squad HasEntered NoSCPsLeft";
+
+        [Description("NTF entrance Cassie Message (leave empty to use default NTF cassie entrance)")]
+        public string ntfAnnouncementCassie { get; set; } = "";
+        public string ntfAnnouncmentCassieNoScp { get; set; } = "";
+
+
 
 
         [Description("Use hints instead of broadcasts?")]
