@@ -65,7 +65,6 @@ namespace UIURescueSquad.Handlers
                         }
                     }
 
-                    List<Player> UIUPlayers = new List<Player>();
                     List<Player> NTFPlayers = new List<Player>(ev.Players);
 
                     ev.Players.Clear();
