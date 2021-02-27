@@ -22,8 +22,8 @@ namespace UIURescueSquad
         public override string Name { get; } = "UIU Rescue Squad";
         public override string Author { get; } = "JesusQC";
         public override string Prefix { get; } = "UIURescueSquad";
-        public override Version Version { get; } = new Version(2, 1, 0);
-        public override Version RequiredExiledVersion => new Version(2, 3, 3);
+        public override Version Version { get; } = new Version(2, 1, 1);
+        public override Version RequiredExiledVersion => new Version(2, 3, 4);
 
         public EventHandlers EventHandlers;
 

@@ -12,7 +12,6 @@ namespace UIURescueSquad
         [Description("Should debug messages be shown in a server console")]
         public bool Debug { get; set; } = false;
 
-
         [Description("How many mtfs respawns must have happened to spawn UIU")]
         public int respawns { get; set; } = 1;
 
@@ -22,6 +21,13 @@ namespace UIURescueSquad
         [Description("The maximum size of a UIU squad")]
         public int MaxSquad { get; set; } = 8;
 
+        [Description("Should a drop spawn with UIUs")]
+        public bool DropEnabled { get; set; } = true;
+        [Description("List of items that appears in a drop")]
+        public List<ItemType> dropItems = new List<ItemType>
+        {
+            ItemType.Medkit, ItemType.Painkillers, ItemType.Radio, ItemType.Ammo556, ItemType.Disarmer
+        };
 
         [Description("Spawn position")]
         public float spawnPosX { get; set; } = 170.0f;
@@ -33,7 +39,6 @@ namespace UIURescueSquad
         [Description("Entrance broadcast announcement message time")]
         public ushort AnnouncementTime { get; set; } = 10;
 
-        
         [Description("UIU entrance Cassie Message")]
         public string uiuAnnouncementCassie { get; set; } = "The U I U Squad HasEntered AwaitingRecontainment {scpnum}";
         public string uiuAnnouncmentCassieNoScp { get; set; } = "The U I U Squad HasEntered NoSCPsLeft";
@@ -42,18 +47,12 @@ namespace UIURescueSquad
         public string ntfAnnouncementCassie { get; set; } = "";
         public string ntfAnnouncmentCassieNoScp { get; set; } = "";
 
-
-
-
         [Description("Use hints instead of broadcasts?")]
         public bool UseHintsHere { get; set; } = false;
         [Description("UIU Player broadcast (null to disable it)")]
         public string UIUBroadcast { get; set; } = "<i>You are an</i><color=yellow><b> UIU trooper</b></color>, <i>help </i><color=#0377fc><b>MTFs</b></color><i> to finish its job</i>";
         [Description("UIU Player broadcast (null to disable it)")]
         public ushort UIUBroadcastTime { get; set; } = 10;
-
-
-
 
         [Description("UIU Soldier life (NTF CADET)")]
         public int UIUSoldierLife { get; set; } = 160;
@@ -68,8 +67,6 @@ namespace UIURescueSquad
         [Description("UIU Soldier Rank (instead of Nine-Tailed Fox Cadet role)")]
         public string UIUSoldierRank { get; set; } = "UIU Soldier";
 
-
-
         [Description("UIU Agent life (NTF LIEUTENANT)")]
         public int UIUAgentLife { get; set; } = 175;
         [Description("The items UIUs agents spawn with")]
@@ -82,8 +79,6 @@ namespace UIURescueSquad
         };
         [Description("UIU Agent Rank (instead of Nine-Tailed Fox Lieutenant role)")]
         public string UIUAgentRank { get; set; } = "UIU Agent";
-
-
 
         [Description("UIU Leader life (NTF COMMANDER)")]
         public int UIULeaderLife { get; set; } = 215;
@@ -102,6 +97,5 @@ namespace UIURescueSquad
         public string GuardUnitColor { get; set; } = "#797D7F";
         public string NtfUnitColor { get; set; } = "#0887E5";
         public string UiuUnitColor { get; set; } = "yellow";
-
     }
 }
