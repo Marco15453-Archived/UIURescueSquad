@@ -54,15 +54,14 @@ namespace UIURescueSquad.Handlers
         {
             if (ev.NextKnownTeam == SpawnableTeamType.NineTailedFox)
             {
+                respawns++;
+
                 if (isSpawnable)
                 {
                     if (plugin.Config.AnnouncementText != null)
                     {
-                        if (plugin.Config.AnnouncementText != null && plugin.Config.AnnouncementText != null)
-                        {
-                            Map.ClearBroadcasts();
-                            Map.Broadcast(plugin.Config.AnnouncementTime, plugin.Config.AnnouncementText);
-                        }
+                        Map.ClearBroadcasts();
+                        Map.Broadcast(plugin.Config.AnnouncementTime, plugin.Config.AnnouncementText);
                     }
 
                     List<Player> NTFPlayers = new List<Player>(ev.Players);
@@ -148,14 +147,12 @@ namespace UIURescueSquad.Handlers
                         });
                     }
                 }
-                respawns++;
             }
         }
 
         public void OnAnnouncingMTF(AnnouncingNtfEntranceEventArgs ev)
         {
             string cassieMessage = string.Empty;
-
 
             if (!isSpawnable) //NTF Spawn
             {
@@ -249,7 +246,7 @@ namespace UIURescueSquad.Handlers
             if (!isSpawnable)
             {
                 Log.Debug("UIU is not spawnable right now. Returning...", plugin.Config.Debug);
-                Timing.CallDelayed(1f, () =>
+                Timing.CallDelayed(0.1f, () =>
                 {
                     isSpawnable = false;
                     return;
@@ -259,7 +256,7 @@ namespace UIURescueSquad.Handlers
             if (!SerpentsHand.EventHandlers.isSpawnable)
             {
                 Log.Debug("Serpents Hand is not spawnable right now. Returning...", plugin.Config.Debug);
-                Timing.CallDelayed(1f, () =>
+                Timing.CallDelayed(0.1f, () =>
                 {
                     SerpentsHand.EventHandlers.isSpawnable = false;
                     return;
