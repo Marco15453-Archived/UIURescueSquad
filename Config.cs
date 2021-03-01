@@ -24,7 +24,7 @@ namespace UIURescueSquad
         [Description("Should a drop spawn with UIUs")]
         public bool DropEnabled { get; set; } = true;
         [Description("List of items that appears in a drop")]
-        public List<ItemType> dropItems = new List<ItemType>
+        public List<ItemType> dropItems { get; set; } = new List<ItemType>
         {
             ItemType.Medkit, ItemType.Painkillers, ItemType.Radio, ItemType.Ammo556, ItemType.Disarmer
         };

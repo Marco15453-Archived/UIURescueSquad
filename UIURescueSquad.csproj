@@ -72,7 +72,7 @@
       <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Mirror.dll</HintPath>
     </Reference>
     <Reference Include="SerpentsHand">
-      <HintPath>..\..\..\..\..\..\Downloads\SerpentsHand.dll</HintPath>
+      <HintPath>..\..\..\AppData\Roaming\EXILED\Plugins\SerpentsHand.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />

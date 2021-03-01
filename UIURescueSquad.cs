@@ -7,7 +7,6 @@ using ServerEvent = Exiled.Events.Handlers.Server;
 using MapEvent = Exiled.Events.Handlers.Map;
 using Exiled.API.Interfaces;
 using Exiled.Loader;
-using System.Reflection;
 
 namespace UIURescueSquad
 {
@@ -17,12 +16,12 @@ namespace UIURescueSquad
 
         private Harmony hInstance;
 
-        public static Assembly assemblySH;
+        public static bool assemblySH;
 
         public override string Name { get; } = "UIU Rescue Squad";
         public override string Author { get; } = "JesusQC";
         public override string Prefix { get; } = "UIURescueSquad";
-        public override Version Version { get; } = new Version(2, 1, 1);
+        public override Version Version { get; } = new Version(2, 1, 2);
         public override Version RequiredExiledVersion => new Version(2, 3, 4);
 
         public EventHandlers EventHandlers;
@@ -50,7 +49,7 @@ namespace UIURescueSquad
             {
                 if (plugin.Name == "SerpentsHand" && plugin.Config.IsEnabled)
                 {
-                    assemblySH = plugin.Assembly;
+                    assemblySH = true;
                     Log.Debug("SerpentsHand plugin detected!", Config.Debug);
                 }
             }

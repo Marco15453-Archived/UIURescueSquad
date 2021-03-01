@@ -41,7 +41,7 @@ namespace UIURescueSquad.Handlers
             else
                 isSpawnable = false;
 
-            if (UIURescueSquad.assemblySH != null)
+            if (UIURescueSquad.assemblySH)
                 SerpentsHandTeam();
         }
 
@@ -274,24 +274,18 @@ namespace UIURescueSquad.Handlers
 
         public void SerpentsHandTeam()
         {
-            if (!isSpawnable)
+            if (!isSpawnable || respawns < plugin.Config.respawns)
             {
                 Log.Debug("UIU is not spawnable right now. Returning...", plugin.Config.Debug);
-                Timing.CallDelayed(0.1f, () =>
-                {
-                    isSpawnable = false;
-                    return;
-                });
+                isSpawnable = false;
+                return;
             }
 
-            if (!SerpentsHand.EventHandlers.isSpawnable)
+            if (!SerpentsHand.EventHandlers.isSpawnable || SerpentsHand.EventHandlers.serpentsRespawnCount >= SerpentsHand.EventHandlers.MaxSpawns)
             {
                 Log.Debug("Serpents Hand is not spawnable right now. Returning...", plugin.Config.Debug);
-                Timing.CallDelayed(0.1f, () =>
-                {
-                    SerpentsHand.EventHandlers.isSpawnable = false;
-                    return;
-                });
+                SerpentsHand.EventHandlers.isSpawnable = false;
+                return;
             }
 
             if (rand.Next(0, 2) == 0)
