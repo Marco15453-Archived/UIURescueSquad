@@ -16,7 +16,7 @@ namespace UIURescueSquad
 
         private Harmony hInstance;
 
-        public static bool assemblySH;
+        public static bool assemblySH = false;
 
         public override string Name { get; } = "UIU Rescue Squad";
         public override string Author { get; } = "JesusQC";
@@ -51,6 +51,7 @@ namespace UIURescueSquad
                 {
                     assemblySH = true;
                     Log.Debug("SerpentsHand plugin detected!", Config.Debug);
+                    break;
                 }
             }
 
