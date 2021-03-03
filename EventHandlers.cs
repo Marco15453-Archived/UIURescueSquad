@@ -41,144 +41,146 @@ namespace UIURescueSquad.Handlers
             else
                 isSpawnable = false;
 
-            if (UIURescueSquad.assemblySH != null)
+            if (UIURescueSquad.assemblySH)
                 SerpentsHandTeam();
         }
 
         public void OnTeamRespawn(RespawningTeamEventArgs ev)
         {
-            if (isSpawnable && ev.NextKnownTeam == SpawnableTeamType.NineTailedFox)
+            if (ev.NextKnownTeam == SpawnableTeamType.NineTailedFox)
             {
-                if (plugin.Config.AnnouncementText != null)
+                respawns++;
+
+                if (isSpawnable)
                 {
-                    if (plugin.Config.AnnouncementText != null && plugin.Config.AnnouncementText != null)
+                    if (plugin.Config.AnnouncementText != null)
                     {
                         Map.ClearBroadcasts();
                         Map.Broadcast(plugin.Config.AnnouncementTime, plugin.Config.AnnouncementText);
                     }
-                }
 
-                if (plugin.Config.DropEnabled)
-                {
-                    Vector3 spawnPos = Map.GetRandomSpawnPoint(RoleType.NtfCadet);
-                    foreach (ItemType item in plugin.Config.dropItems)
+                    if (plugin.Config.DropEnabled)
                     {
-                        Exiled.API.Extensions.Item.Spawn(item, GetDuration(item), spawnPos);
-                    }
-
-                    int GetDuration(ItemType item)
-                    {
-                        switch (item)
+                        Vector3 spawnPos = Map.GetRandomSpawnPoint(RoleType.NtfCadet);
+                        foreach (ItemType item in plugin.Config.dropItems)
                         {
-                            case ItemType.GunCOM15:
-                                return 12;
-                            case ItemType.GunE11SR:
-                                return 18;
-                            case ItemType.GunProject90:
-                                return 50;
-                            case ItemType.GunMP7:
-                                return 35;
-                            case ItemType.GunLogicer:
-                                return 100;
-                            case ItemType.GunUSP:
-                                return 18;
-                            case ItemType.Ammo762:
-                                return 25;
-                            case ItemType.Ammo9mm:
-                                return 25;
-                            case ItemType.Ammo556:
-                                return 25;
-                            default:
-                                return 50;
+                            Exiled.API.Extensions.Item.Spawn(item, GetDurability(item), spawnPos);
                         }
-                    }
-                }
 
-                List<Player> NTFPlayers = new List<Player>(ev.Players);
-
-                ev.Players.Clear();
-                for (int i = 0; i < plugin.Config.MaxSquad && NTFPlayers.Count > 0; i++)
-                {
-                    Player player = NTFPlayers[rand.Next(NTFPlayers.Count)];
-                    NTFPlayers.Remove(player);
-                    ev.Players.Add(player);
-                }
-
-                foreach (Player player in ev.Players)
-                {
-                    uiuPlayers.Add(player);
-
-                    if (plugin.Config.UIUBroadcast != null && plugin.Config.UIUBroadcastTime.ToString() != null)
-                    {
-                        if (plugin.Config.UseHintsHere)
+                        int GetDurability(ItemType item)
                         {
-                            player.ShowHint(plugin.Config.UIUBroadcast, plugin.Config.UIUBroadcastTime);
-                        }
-                        else
-                        {
-                            player.ClearBroadcasts();
-                            player.Broadcast(plugin.Config.UIUBroadcastTime, plugin.Config.UIUBroadcast);
+                            switch (item)
+                            {
+                                case ItemType.GunCOM15:
+                                    return 12;
+                                case ItemType.GunE11SR:
+                                    return 40;
+                                case ItemType.GunProject90:
+                                    return 50;
+                                case ItemType.GunMP7:
+                                    return 35;
+                                case ItemType.GunLogicer:
+                                    return 75;
+                                case ItemType.GunUSP:
+                                    return 18;
+                                case ItemType.MicroHID:
+                                    return 1;
+                                case ItemType.Ammo762:
+                                    return 25;
+                                case ItemType.Ammo9mm:
+                                    return 25;
+                                case ItemType.Ammo556:
+                                    return 25;
+                                default:
+                                    return 0;
+                            }
                         }
                     }
 
-                    Timing.CallDelayed(0.01f, () =>
+                    List<Player> NTFPlayers = new List<Player>(ev.Players);
+
+                    ev.Players.Clear();
+                    for (int i = 0; i < plugin.Config.MaxSquad && NTFPlayers.Count > 0; i++)
                     {
-                        player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Nickname;
-                        player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Role;
+                        Player player = NTFPlayers[rand.Next(NTFPlayers.Count)];
+                        NTFPlayers.Remove(player);
+                        ev.Players.Add(player);
+                    }
 
-                        switch (player.Role)
+                    foreach (Player player in ev.Players)
+                    {
+                        uiuPlayers.Add(player);
+
+                        if (plugin.Config.UIUBroadcast != null && plugin.Config.UIUBroadcastTime.ToString() != null)
                         {
-                            case RoleType.NtfCadet:
-                                {
-                                    player.Health = plugin.Config.UIUSoldierLife;
-
-                                    player.ResetInventory(plugin.Config.UIUSoldierInventory);
-
-                                    for (int i = 0; i < 3; i++)
-                                    {
-                                        player.Ammo[i] = plugin.Config.UIUSoldierAmmo[i];
-                                    }
-
-                                    player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UIUSoldierRank}";
-                                    break;
-                                }
-
-                            case RoleType.NtfLieutenant:
-                                {
-                                    player.Health = plugin.Config.UIUAgentLife;
-
-                                    player.ResetInventory(plugin.Config.UIUAgentInventory);
-
-                                    for (int i = 0; i < 3; i++)
-                                    {
-                                        player.Ammo[i] = plugin.Config.UIUAgentAmmo[i];
-                                    }
-
-                                    player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UIUAgentRank}";
-                                    break;
-                                }
-
-                            case RoleType.NtfCommander:
-                                {
-                                    player.Health = plugin.Config.UIULeaderLife;
-
-                                    player.ResetInventory(plugin.Config.UIULeaderInventory);
-
-                                    for (int i = 0; i < 3; i++)
-                                    {
-                                        player.Ammo[i] = plugin.Config.UIULeaderAmmo[i];
-                                    }
-
-                                    player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UIULeaderRank}";
-                                    break;
-                                }
+                            if (plugin.Config.UseHintsHere)
+                            {
+                                player.ShowHint(plugin.Config.UIUBroadcast, plugin.Config.UIUBroadcastTime);
+                            }
+                            else
+                            {
+                                player.ClearBroadcasts();
+                                player.Broadcast(plugin.Config.UIUBroadcastTime, plugin.Config.UIUBroadcast);
+                            }
                         }
-                        Timing.CallDelayed(0.4f, () => { player.Position = new Vector3(plugin.Config.spawnPosX, plugin.Config.spawnPosY, plugin.Config.spawnPosZ); });
-                    });
+
+                        Timing.CallDelayed(0.01f, () =>
+                        {
+                            player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Nickname;
+                            player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Role;
+
+                            switch (player.Role)
+                            {
+                                case RoleType.NtfCadet:
+                                    {
+                                        player.Health = plugin.Config.UIUSoldierLife;
+
+                                        player.ResetInventory(plugin.Config.UIUSoldierInventory);
+
+                                        for (int i = 0; i < 3; i++)
+                                        {
+                                            player.Ammo[i] = plugin.Config.UIUSoldierAmmo[i];
+                                        }
+
+                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UIUSoldierRank}";
+                                        break;
+                                    }
+
+                                case RoleType.NtfLieutenant:
+                                    {
+                                        player.Health = plugin.Config.UIUAgentLife;
+
+                                        player.ResetInventory(plugin.Config.UIUAgentInventory);
+
+                                        for (int i = 0; i < 3; i++)
+                                        {
+                                            player.Ammo[i] = plugin.Config.UIUAgentAmmo[i];
+                                        }
+
+                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UIUAgentRank}";
+                                        break;
+                                    }
+
+                                case RoleType.NtfCommander:
+                                    {
+                                        player.Health = plugin.Config.UIULeaderLife;
+
+                                        player.ResetInventory(plugin.Config.UIULeaderInventory);
+
+                                        for (int i = 0; i < 3; i++)
+                                        {
+                                            player.Ammo[i] = plugin.Config.UIULeaderAmmo[i];
+                                        }
+
+                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UIULeaderRank}";
+                                        break;
+                                    }
+                            }
+                            Timing.CallDelayed(0.4f, () => { player.Position = new Vector3(plugin.Config.spawnPosX, plugin.Config.spawnPosY, plugin.Config.spawnPosZ); });
+                        });
+                    }
                 }
             }
-            else if(ev.NextKnownTeam == SpawnableTeamType.NineTailedFox)
-                respawns++;
         }
 
         public void OnAnnouncingMTF(AnnouncingNtfEntranceEventArgs ev)
@@ -272,24 +274,18 @@ namespace UIURescueSquad.Handlers
 
         public void SerpentsHandTeam()
         {
-            if (!isSpawnable)
+            if (!isSpawnable || respawns < plugin.Config.respawns)
             {
                 Log.Debug("UIU is not spawnable right now. Returning...", plugin.Config.Debug);
-                Timing.CallDelayed(1f, () =>
-                {
-                    isSpawnable = false;
-                    return;
-                });
+                isSpawnable = false;
+                return;
             }
 
-            if (!SerpentsHand.EventHandlers.isSpawnable)
+            if (!SerpentsHand.EventHandlers.isSpawnable || SerpentsHand.EventHandlers.serpentsRespawnCount >= SerpentsHand.EventHandlers.MaxSpawns)
             {
                 Log.Debug("Serpents Hand is not spawnable right now. Returning...", plugin.Config.Debug);
-                Timing.CallDelayed(1f, () =>
-                {
-                    SerpentsHand.EventHandlers.isSpawnable = false;
-                    return;
-                });
+                SerpentsHand.EventHandlers.isSpawnable = false;
+                return;
             }
 
             if (rand.Next(0, 2) == 0)
