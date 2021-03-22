@@ -2,11 +2,10 @@
 using Exiled.API.Features;
 using UIURescueSquad.Handlers;
 using HarmonyLib;
+
 using PlayerEvent = Exiled.Events.Handlers.Player;
 using ServerEvent = Exiled.Events.Handlers.Server;
 using MapEvent = Exiled.Events.Handlers.Map;
-using Exiled.API.Interfaces;
-using Exiled.Loader;
 
 namespace UIURescueSquad
 {
@@ -44,16 +43,6 @@ namespace UIURescueSquad
             PlayerEvent.Destroying += EventHandlers.OnDestroy;
             PlayerEvent.ChangingRole += EventHandlers.OnChanging;
             PlayerEvent.Died += EventHandlers.OnDying;
-
-            foreach (IPlugin<IConfig> plugin in Loader.Plugins)
-            {
-                if (plugin.Name == "SerpentsHand" && plugin.Config.IsEnabled)
-                {
-                    assemblySH = true;
-                    Log.Debug("SerpentsHand plugin detected!", Config.Debug);
-                    break;
-                }
-            }
 
             base.OnEnabled();
         }
