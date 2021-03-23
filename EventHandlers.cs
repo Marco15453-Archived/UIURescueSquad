@@ -1,18 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using MEC;
 using Respawning;
 using UnityEngine;
 
-namespace UIURescueSquad.Handlers
+namespace UIURescueSquad
 {
-    public class EventHandlers
+    public partial class EventHandlers
     {
         private readonly UIURescueSquad plugin;
         public EventHandlers(UIURescueSquad plugin) => this.plugin = plugin;
 
-        public static bool isSpawnable;
+        public static bool IsSpawnable;
 
         public static List<Player> uiuPlayers = new List<Player>();
 
@@ -30,16 +31,32 @@ namespace UIURescueSquad.Handlers
         public void OnRoundStart()
         {
             if (!string.IsNullOrEmpty(plugin.Config.GuardUnitColor))
-                Map.ChangeUnitColor(0, plugin.Config.GuardUnitColor);
+            {
+            TryAgain:
+
+                try
+                {
+                    Map.ChangeUnitColor(0, plugin.Config.GuardUnitColor);
+                }
+                catch (Exception)
+                {
+                    goto TryAgain;
+                }
+            }
         }
 
-        public void IsSpawnable()
+        public void CalculateChance()
         {
             randnums = rand.Next(1, 101);
-            if (randnums <= plugin.Config.probability && respawns >= plugin.Config.respawns)
-                isSpawnable = true;
+            if (randnums <= plugin.Config.Probability &&
+                respawns >= plugin.Config.Respawns)
+            {
+                IsSpawnable = true;
+            }
             else
-                isSpawnable = false;
+            {
+                IsSpawnable = false;
+            }
         }
 
         public void OnTeamRespawn(RespawningTeamEventArgs ev)
@@ -48,7 +65,7 @@ namespace UIURescueSquad.Handlers
             {
                 respawns++;
 
-                if (isSpawnable)
+                if (IsSpawnable)
                 {
                     if (plugin.Config.AnnouncementText != null)
                     {
@@ -58,38 +75,27 @@ namespace UIURescueSquad.Handlers
 
                     if (plugin.Config.DropEnabled)
                     {
-                        Vector3 spawnPos = Map.GetRandomSpawnPoint(RoleType.NtfCadet);
-                        foreach (ItemType item in plugin.Config.dropItems)
+                        foreach (string item in plugin.Config.dropItems)
                         {
-                            Exiled.API.Extensions.Item.Spawn(item, GetDurability(item), spawnPos);
-                        }
+                            Vector3 spawnPos = Map.GetRandomSpawnPoint(RoleType.NtfCadet);
 
-                        int GetDurability(ItemType item)
-                        {
-                            switch (item)
+                            try
                             {
-                                case ItemType.GunCOM15:
-                                    return 12;
-                                case ItemType.GunE11SR:
-                                    return 40;
-                                case ItemType.GunProject90:
-                                    return 50;
-                                case ItemType.GunMP7:
-                                    return 35;
-                                case ItemType.GunLogicer:
-                                    return 75;
-                                case ItemType.GunUSP:
-                                    return 18;
-                                case ItemType.MicroHID:
-                                    return 1;
-                                case ItemType.Ammo762:
-                                    return 25;
-                                case ItemType.Ammo9mm:
-                                    return 25;
-                                case ItemType.Ammo556:
-                                    return 25;
-                                default:
-                                    return 0;
+                                ItemType parsedItem = (ItemType)Enum.Parse(typeof(ItemType), item, true);
+
+                                Exiled.API.Extensions.Item.Spawn(parsedItem, Exiled.API.Extensions.Item.GetDefaultDurability(parsedItem), spawnPos);
+                            }
+                            catch (Exception)
+                            {
+                                if (!UIURescueSquad.IsCustomItems)
+                                {
+                                    Log.Error($"\"{item}\" is not a valid item name.");
+                                    continue;
+                                }
+                                else
+                                {
+                                    CustomItemHandler(spawnPos, item);
+                                }
                             }
                         }
                     }
@@ -108,16 +114,16 @@ namespace UIURescueSquad.Handlers
                     {
                         uiuPlayers.Add(player);
 
-                        if (plugin.Config.UIUBroadcast != null && plugin.Config.UIUBroadcastTime.ToString() != null)
+                        if (plugin.Config.UiuBroadcast != null && plugin.Config.UiuBroadcastTime.ToString() != null)
                         {
                             if (plugin.Config.UseHintsHere)
                             {
-                                player.ShowHint(plugin.Config.UIUBroadcast, plugin.Config.UIUBroadcastTime);
+                                player.ShowHint(plugin.Config.UiuBroadcast, plugin.Config.UiuBroadcastTime);
                             }
                             else
                             {
                                 player.ClearBroadcasts();
-                                player.Broadcast(plugin.Config.UIUBroadcastTime, plugin.Config.UIUBroadcast);
+                                player.Broadcast(plugin.Config.UiuBroadcastTime, plugin.Config.UiuBroadcast);
                             }
                         }
 
@@ -130,46 +136,52 @@ namespace UIURescueSquad.Handlers
                             {
                                 case RoleType.NtfCadet:
                                     {
-                                        player.Health = plugin.Config.UIUSoldierLife;
+                                        player.MaxHealth = plugin.Config.UiuSoldierLife;
+                                        player.Health = plugin.Config.UiuSoldierLife;
 
-                                        player.ResetInventory(plugin.Config.UIUSoldierInventory);
+                                        if (plugin.Config.UiuSoldierInventory.Count > 0)
+                                            GiveCustomInventory(plugin.Config.UiuSoldierInventory, player);
 
-                                        for (int i = 0; i < 3; i++)
+                                        foreach (var ammo in plugin.Config.UiuSoldierAmmo)
                                         {
-                                            player.Ammo[i] = plugin.Config.UIUSoldierAmmo[i];
+                                            player.Ammo[(int)ammo.Key] = ammo.Value;
                                         }
 
-                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UIUSoldierRank}";
+                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UiuSoldierRank}";
                                         break;
                                     }
 
                                 case RoleType.NtfLieutenant:
                                     {
-                                        player.Health = plugin.Config.UIUAgentLife;
+                                        player.MaxHealth = plugin.Config.UiuAgentLife;
+                                        player.Health = plugin.Config.UiuAgentLife;
 
-                                        player.ResetInventory(plugin.Config.UIUAgentInventory);
+                                        if (plugin.Config.UiuAgentInventory.Count > 0)
+                                            GiveCustomInventory(plugin.Config.UiuAgentInventory, player);
 
-                                        for (int i = 0; i < 3; i++)
+                                        foreach (var ammo in plugin.Config.UIUAgentAmmo)
                                         {
-                                            player.Ammo[i] = plugin.Config.UIUAgentAmmo[i];
+                                            player.Ammo[(int)ammo.Key] = ammo.Value;
                                         }
 
-                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UIUAgentRank}";
+                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UiuAgentRank}";
                                         break;
                                     }
 
                                 case RoleType.NtfCommander:
                                     {
-                                        player.Health = plugin.Config.UIULeaderLife;
+                                        player.MaxHealth = plugin.Config.UiuLeaderLife;
+                                        player.Health = plugin.Config.UiuLeaderLife;
 
-                                        player.ResetInventory(plugin.Config.UIULeaderInventory);
+                                        if (plugin.Config.UiuLeaderInventory.Count > 1)
+                                            GiveCustomInventory(plugin.Config.UiuLeaderInventory, player);
 
-                                        for (int i = 0; i < 3; i++)
+                                        foreach (var ammo in plugin.Config.UiuLeaderAmmo)
                                         {
-                                            player.Ammo[i] = plugin.Config.UIULeaderAmmo[i];
+                                            player.Ammo[(int)ammo.Key] = ammo.Value;
                                         }
 
-                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UIULeaderRank}";
+                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UiuLeaderRank}";
                                         break;
                                     }
                             }
@@ -184,48 +196,75 @@ namespace UIURescueSquad.Handlers
         {
             string cassieMessage = string.Empty;
 
-            if (!isSpawnable)
+            if (!IsSpawnable)
             {
-                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.ntfAnnouncmentCassieNoScp))
+                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.NtfAnnouncmentCassieNoScp))
                 {
                     ev.IsAllowed = false;
 
-                    cassieMessage = plugin.Config.ntfAnnouncmentCassieNoScp;
+                    cassieMessage = plugin.Config.NtfAnnouncmentCassieNoScp;
                 }
 
                 else
 
-                if (!string.IsNullOrEmpty(plugin.Config.ntfAnnouncementCassie))
+                if (!string.IsNullOrEmpty(plugin.Config.NtfAnnouncementCassie))
                 {
                     ev.IsAllowed = false;
 
-                    cassieMessage = plugin.Config.ntfAnnouncementCassie;
+                    cassieMessage = plugin.Config.NtfAnnouncementCassie;
                 }
 
+                // HIGHLY EXPERIMENTAL FIX. NEEDS TESTING.
                 if (!string.IsNullOrEmpty(plugin.Config.NtfUnitColor))
-                    Map.ChangeUnitColor(respawns, plugin.Config.NtfUnitColor);
+                {
+                TryAgain:
+
+                    try
+                    {
+                        Map.ChangeUnitColor(respawns, plugin.Config.NtfUnitColor);
+                    }
+                    catch (Exception)
+                    {
+                        goto TryAgain;
+                    }
+                }
+
             }
 
-            if (isSpawnable && respawns >= plugin.Config.respawns + 1)
+            if (IsSpawnable && respawns >= plugin.Config.Respawns + 1)
             {
-                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.uiuAnnouncmentCassieNoScp))
+                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.UiuAnnouncmentCassieNoScp))
                 {
                     ev.IsAllowed = false;
 
-                    cassieMessage = plugin.Config.uiuAnnouncmentCassieNoScp;
+                    cassieMessage = plugin.Config.UiuAnnouncmentCassieNoScp;
                 }
 
                 else
 
-                if (!string.IsNullOrEmpty(plugin.Config.uiuAnnouncementCassie))
+                if (!string.IsNullOrEmpty(plugin.Config.UiuAnnouncementCassie))
                 {
                     ev.IsAllowed = false;
 
-                    cassieMessage = plugin.Config.uiuAnnouncementCassie;
+                    cassieMessage = plugin.Config.UiuAnnouncementCassie;
                 }
 
+
+                // HIGHLY EXPERIMENTAL FIX. NEEDS TESTING.
                 if (!string.IsNullOrEmpty(plugin.Config.UiuUnitColor))
-                    Map.ChangeUnitColor(respawns, plugin.Config.UiuUnitColor);
+                {
+                TryAgain:
+
+                    try
+                    {
+                        Map.ChangeUnitColor(respawns, plugin.Config.UiuUnitColor);
+                    }
+                    catch (Exception)
+                    {
+                        goto TryAgain;
+                    }
+                }
+
             }
 
             cassieMessage = cassieMessage.Replace("{scpnum}", $"{ev.ScpsLeft} scpsubject");
@@ -245,28 +284,20 @@ namespace UIURescueSquad.Handlers
             }
         }
 
-        public void OnDying(DiedEventArgs ev)
+        public void OnDied(DiedEventArgs ev)
         {
             if (uiuPlayers.Contains(ev.Target))
             {
                 KillUIU(ev.Target);
             }
         }
+
         public void OnChanging(ChangingRoleEventArgs ev)
         {
             if (uiuPlayers.Contains(ev.Player) && ev.Player.Role != RoleType.Spectator)
             {
                 KillUIU(ev.Player);
             }
-        }
-
-        public void KillUIU(Player player)
-        {
-            player.CustomInfo = string.Empty;
-            player.ReferenceHub.nicknameSync.ShownPlayerInfo |= PlayerInfoArea.Nickname;
-            player.ReferenceHub.nicknameSync.ShownPlayerInfo |= PlayerInfoArea.Role;
-
-            uiuPlayers.Remove(player);
         }
     }
 }

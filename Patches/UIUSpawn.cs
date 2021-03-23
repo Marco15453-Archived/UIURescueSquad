@@ -13,7 +13,7 @@ namespace UIURescueSquad.Patches
             {
                 if (__result == Respawning.SpawnableTeamType.NineTailedFox)
                 {
-                    UIURescueSquad.Singleton.EventHandlers.IsSpawnable();
+                    UIURescueSquad.Singleton.EventHandlers.CalculateChance();
                 }
             }
             catch(Exception e)

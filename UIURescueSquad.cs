@@ -1,7 +1,7 @@
 ﻿using System;
 using Exiled.API.Features;
-using UIURescueSquad.Handlers;
 using HarmonyLib;
+using Exiled.Loader;
 
 using PlayerEvent = Exiled.Events.Handlers.Player;
 using ServerEvent = Exiled.Events.Handlers.Server;
@@ -15,24 +15,33 @@ namespace UIURescueSquad
 
         private Harmony hInstance;
 
-        public static bool assemblySH = false;
-
         public override string Name { get; } = "UIU Rescue Squad";
         public override string Author { get; } = "JesusQC";
         public override string Prefix { get; } = "UIURescueSquad";
-        public override Version Version { get; } = new Version(2, 1, 2);
-        public override Version RequiredExiledVersion => new Version(2, 3, 4);
+        public override Version Version { get; } = new Version(2, 2, 0);
+        public override Version RequiredExiledVersion => new Version(2, 8, 0);
 
         public EventHandlers EventHandlers;
+
+        public static bool IsCustomItems = false;
 
         public override void OnEnabled()
         {
             Singleton = this;
+            EventHandlers = new EventHandlers(this);
 
             hInstance = new Harmony($"jesus.uiurescuesquad-{DateTime.Now.Ticks}");
             hInstance.PatchAll();
 
-            EventHandlers = new EventHandlers(this);
+            foreach (var plugin in Loader.Plugins)
+            {
+                if (plugin.Name.ToLower() == "customitems" && plugin.Config.IsEnabled)
+                {
+                    IsCustomItems = true;
+                    Log.Debug("CustomItems plugin detected!", Config.Debug);
+                    break;
+                }
+            }
 
             MapEvent.AnnouncingNtfEntrance += EventHandlers.OnAnnouncingMTF;
 
@@ -42,7 +51,7 @@ namespace UIURescueSquad
 
             PlayerEvent.Destroying += EventHandlers.OnDestroy;
             PlayerEvent.ChangingRole += EventHandlers.OnChanging;
-            PlayerEvent.Died += EventHandlers.OnDying;
+            PlayerEvent.Died += EventHandlers.OnDied;
 
             base.OnEnabled();
         }
@@ -56,7 +65,7 @@ namespace UIURescueSquad
 
             PlayerEvent.Destroying -= EventHandlers.OnDestroy;
             PlayerEvent.ChangingRole -= EventHandlers.OnChanging;
-            PlayerEvent.Died -= EventHandlers.OnDying;
+            PlayerEvent.Died -= EventHandlers.OnDied;
 
             hInstance.UnpatchAll();
             EventHandlers = null;

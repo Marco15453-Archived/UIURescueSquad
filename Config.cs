@@ -1,4 +1,5 @@
-﻿using Exiled.API.Interfaces;
+﻿using Exiled.API.Enums;
+using Exiled.API.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -13,23 +14,24 @@ namespace UIURescueSquad
         public bool Debug { get; set; } = false;
 
         [Description("How many mtfs respawns must have happened to spawn UIU")]
-        public int respawns { get; set; } = 1;
+        public int Respawns { get; set; } = 1;
 
         [Description("Probability of a UIU Squad replacing a MTF spawn")]
-        public int probability { get; set; } = 50;
+        public int Probability { get; set; } = 50;
 
         [Description("The maximum size of a UIU squad")]
         public int MaxSquad { get; set; } = 8;
 
         [Description("Should a drop spawn with UIUs")]
         public bool DropEnabled { get; set; } = true;
+
         [Description("List of items that appears in a drop")]
-        public List<ItemType> dropItems { get; set; } = new List<ItemType>
+        public List<string> dropItems { get; set; } = new List<string>
         {
-            ItemType.Medkit, ItemType.Painkillers, ItemType.Radio, ItemType.Ammo556, ItemType.Disarmer
+            "Medkit", "Painkillers", "Radio", "Ammo556", "Disarmer"
         };
 
-        [Description("Spawn position")]
+        [Description("UIU Rescue squad spawn position:")]
         public float spawnPosX { get; set; } = 170.0f;
         public float spawnPosY { get; set; } = 985.0f;
         public float spawnPosZ { get; set; } = 29.0f;
@@ -40,58 +42,72 @@ namespace UIURescueSquad
         public ushort AnnouncementTime { get; set; } = 10;
 
         [Description("UIU entrance Cassie Message")]
-        public string uiuAnnouncementCassie { get; set; } = "The U I U Squad HasEntered AwaitingRecontainment {scpnum}";
-        public string uiuAnnouncmentCassieNoScp { get; set; } = "The U I U Squad HasEntered NoSCPsLeft";
+        public string UiuAnnouncementCassie { get; set; } = "The U I U Squad HasEntered AwaitingRecontainment {scpnum}";
+        public string UiuAnnouncmentCassieNoScp { get; set; } = "The U I U Squad HasEntered NoSCPsLeft";
 
         [Description("NTF entrance Cassie Message (leave empty to use default NTF cassie entrance)")]
-        public string ntfAnnouncementCassie { get; set; } = "";
-        public string ntfAnnouncmentCassieNoScp { get; set; } = "";
+        public string NtfAnnouncementCassie { get; set; } = "";
+        public string NtfAnnouncmentCassieNoScp { get; set; } = "";
 
         [Description("Use hints instead of broadcasts?")]
         public bool UseHintsHere { get; set; } = false;
+
         [Description("UIU Player broadcast (null to disable it)")]
-        public string UIUBroadcast { get; set; } = "<i>You are an</i><color=yellow><b> UIU trooper</b></color>, <i>help </i><color=#0377fc><b>MTFs</b></color><i> to finish its job</i>";
+        public string UiuBroadcast { get; set; } = "<i>You are an</i><color=yellow><b> UIU trooper</b></color>, <i>help </i><color=#0377fc><b>MTFs</b></color><i> to finish its job</i>";
+
         [Description("UIU Player broadcast (null to disable it)")]
-        public ushort UIUBroadcastTime { get; set; } = 10;
+        public ushort UiuBroadcastTime { get; set; } = 10;
 
         [Description("UIU Soldier life (NTF CADET)")]
-        public int UIUSoldierLife { get; set; } = 160;
-        [Description("The items UIUs soldiers spawn with")]
-        public List<ItemType> UIUSoldierInventory { get; set; } = new List<ItemType>() { ItemType.KeycardNTFLieutenant, ItemType.GunProject90, ItemType.GunUSP, ItemType.Disarmer, ItemType.Medkit, ItemType.Adrenaline, ItemType.Radio, ItemType.GrenadeFrag };
+        public int UiuSoldierLife { get; set; } = 160;
 
-        [Description("Ammo UIUs soldiers spawn with. (5.56, 7.62, 9mm)")]
-        public List<uint> UIUSoldierAmmo { get; set; } = new List<uint>
+        [Description("The items UIUs soldiers spawn with")]
+        public List<string> UiuSoldierInventory { get; set; } = new List<string>() { "KeycardNTFLieutenant", "GunProject90", "GunUSP", "Disarmer", "Medkit", "Adrenaline", "Radio", "GrenadeFrag" };
+
+        [Description("Ammo UIUs soldiers spawn with.")]
+        public Dictionary<AmmoType, uint> UiuSoldierAmmo { get; set; } = new Dictionary<AmmoType, uint>
         {
-            80,0,100
+            { AmmoType.Nato556, 80 },
+            { AmmoType.Nato762, 0 },
+            { AmmoType.Nato9, 100 },
         };
+
         [Description("UIU Soldier Rank (instead of Nine-Tailed Fox Cadet role)")]
-        public string UIUSoldierRank { get; set; } = "UIU Soldier";
+        public string UiuSoldierRank { get; set; } = "UIU Soldier";
+
 
         [Description("UIU Agent life (NTF LIEUTENANT)")]
-        public int UIUAgentLife { get; set; } = 175;
-        [Description("The items UIUs agents spawn with")]
-        public List<ItemType> UIUAgentInventory { get; set; } = new List<ItemType>() { ItemType.KeycardNTFLieutenant, ItemType.GunProject90, ItemType.GunUSP, ItemType.Disarmer, ItemType.Medkit, ItemType.Adrenaline, ItemType.Radio, ItemType.GrenadeFrag };
+        public int UiuAgentLife { get; set; } = 175;
 
-        [Description("Ammo UIUs agents spawn with (5.56, 7.62, 9mm)")]
-        public List<uint> UIUAgentAmmo { get; set; } = new List<uint>
+        [Description("The items UIUs agents spawn with")]
+        public List<string> UiuAgentInventory { get; set; } = new List<string>() { "KeycardNTFLieutenant", "GunProject90", "GunUSP", "Disarmer", "Medkit", "Adrenaline", "Radio", "GrenadeFrag" };
+
+        [Description("Ammo UIUs agents spawn with.")]
+        public Dictionary<AmmoType, uint> UIUAgentAmmo { get; set; } = new Dictionary<AmmoType, uint>
         {
-            80,0,100
+            { AmmoType.Nato556, 80 },
+            { AmmoType.Nato762, 0 },
+            { AmmoType.Nato9, 100 },
         };
         [Description("UIU Agent Rank (instead of Nine-Tailed Fox Lieutenant role)")]
-        public string UIUAgentRank { get; set; } = "UIU Agent";
+        public string UiuAgentRank { get; set; } = "UIU Agent";
 
         [Description("UIU Leader life (NTF COMMANDER)")]
-        public int UIULeaderLife { get; set; } = 215;
-        [Description("The items UIU leader spawn with.")]
-        public List<ItemType> UIULeaderInventory { get; set; } = new List<ItemType>() { ItemType.KeycardNTFLieutenant, ItemType.GunProject90, ItemType.GunUSP, ItemType.Disarmer, ItemType.Medkit, ItemType.Adrenaline, ItemType.Radio, ItemType.GrenadeFrag };
+        public int UiuLeaderLife { get; set; } = 215;
 
-        [Description("Ammo UIUs leader spawn with. (5.56, 7.62, 9mm)")]
-        public List<uint> UIULeaderAmmo { get; set; } = new List<uint>
+        [Description("The items UIU leader spawn with.")]
+        public List<string> UiuLeaderInventory { get; set; } = new List<string>() { "KeycardNTFLieutenant", "GunProject90", "GunUSP", "Disarmer", "Medkit", "Adrenaline", "Radio", "GrenadeFrag" };
+
+        [Description("Ammo UIUs leaders spawn with.")]
+        public Dictionary<AmmoType, uint> UiuLeaderAmmo { get; set; } = new Dictionary<AmmoType, uint>
         {
-            80,0,100
+            { AmmoType.Nato556, 80 },
+            { AmmoType.Nato762, 0 },
+            { AmmoType.Nato9, 100 },
         };
         [Description("UIU Leader Rank (instead of Nine-Tailed Fox Commander role)")]
-        public string UIULeaderRank { get; set; } = "UIU Leader";
+        public string UiuLeaderRank { get; set; } = "UIU Leader";
+
 
         [Description("Should plugin change colors for units? (leave empty for default color)")]
         public string GuardUnitColor { get; set; } = "#797D7F";

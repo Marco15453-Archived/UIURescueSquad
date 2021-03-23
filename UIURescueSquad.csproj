@@ -92,6 +92,7 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="EventHandlers.cs" />
+    <Compile Include="Methods.cs" />
     <Compile Include="Patches\UIUSpawn.cs" />
     <Compile Include="UIURescueSquad.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
