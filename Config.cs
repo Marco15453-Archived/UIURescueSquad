@@ -25,7 +25,7 @@ namespace UIURescueSquad
         [Description("Should a drop spawn with UIUs")]
         public bool DropEnabled { get; set; } = true;
 
-        [Description("List of items that appears in a drop")]
+        [Description("List of items that appears in a drop (supports CustomItems)")]
         public List<string> dropItems { get; set; } = new List<string>
         {
             "Medkit", "Painkillers", "Radio", "Ammo556", "Disarmer"
@@ -61,7 +61,7 @@ namespace UIURescueSquad
         [Description("UIU Soldier life (NTF CADET)")]
         public int UiuSoldierLife { get; set; } = 160;
 
-        [Description("The items UIUs soldiers spawn with")]
+        [Description("The items UIUs soldiers spawn with. (supports CustomItems)")]
         public List<string> UiuSoldierInventory { get; set; } = new List<string>() { "KeycardNTFLieutenant", "GunProject90", "GunUSP", "Disarmer", "Medkit", "Adrenaline", "Radio", "GrenadeFrag" };
 
         [Description("Ammo UIUs soldiers spawn with.")]
@@ -95,7 +95,7 @@ namespace UIURescueSquad
         [Description("UIU Leader life (NTF COMMANDER)")]
         public int UiuLeaderLife { get; set; } = 215;
 
-        [Description("The items UIU leader spawn with.")]
+        [Description("The items UIU leader spawn with. (supports CustomItems)")]
         public List<string> UiuLeaderInventory { get; set; } = new List<string>() { "KeycardNTFLieutenant", "GunProject90", "GunUSP", "Disarmer", "Medkit", "Adrenaline", "Radio", "GrenadeFrag" };
 
         [Description("Ammo UIUs leaders spawn with.")]
