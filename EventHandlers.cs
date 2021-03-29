@@ -32,16 +32,11 @@ namespace UIURescueSquad
         {
             if (!string.IsNullOrEmpty(plugin.Config.GuardUnitColor))
             {
-            TryAgain:
-
                 try
                 {
                     Map.ChangeUnitColor(0, plugin.Config.GuardUnitColor);
                 }
-                catch (Exception)
-                {
-                    goto TryAgain;
-                }
+                catch (Exception) {}
             }
         }
 
@@ -88,25 +83,21 @@ namespace UIURescueSquad
                             catch (Exception)
                             {
                                 if (!UIURescueSquad.IsCustomItems)
-                                {
                                     Log.Error($"\"{item}\" is not a valid item name.");
-                                    continue;
-                                }
                                 else
-                                {
                                     CustomItemHandler(spawnPos, item);
-                                }
                             }
                         }
                     }
 
-                    List<Player> NTFPlayers = new List<Player>(ev.Players);
+                    List<Player> ntfPlayers = new List<Player>(ev.Players);
 
                     ev.Players.Clear();
-                    for (int i = 0; i < plugin.Config.MaxSquad && NTFPlayers.Count > 0; i++)
+
+                    for (int i = 0; i < plugin.Config.MaxSquad && ntfPlayers.Count > 0; i++)
                     {
-                        Player player = NTFPlayers[rand.Next(NTFPlayers.Count)];
-                        NTFPlayers.Remove(player);
+                        Player player = ntfPlayers[rand.Next(ntfPlayers.Count)];
+                        ntfPlayers.Remove(player);
                         ev.Players.Add(player);
                     }
 
@@ -114,7 +105,7 @@ namespace UIURescueSquad
                     {
                         uiuPlayers.Add(player);
 
-                        if (plugin.Config.UiuBroadcast != null && plugin.Config.UiuBroadcastTime.ToString() != null)
+                        if (plugin.Config.UiuBroadcast != null && plugin.Config.UiuBroadcastTime != null)
                         {
                             if (plugin.Config.UseHintsHere)
                             {
@@ -213,20 +204,14 @@ namespace UIURescueSquad
 
                     cassieMessage = plugin.Config.NtfAnnouncementCassie;
                 }
-
-                // HIGHLY EXPERIMENTAL FIX. NEEDS TESTING.
+                
                 if (!string.IsNullOrEmpty(plugin.Config.NtfUnitColor))
                 {
-                TryAgain:
-
                     try
                     {
                         Map.ChangeUnitColor(respawns, plugin.Config.NtfUnitColor);
                     }
-                    catch (Exception)
-                    {
-                        goto TryAgain;
-                    }
+                    catch (Exception) { }
                 }
 
             }
