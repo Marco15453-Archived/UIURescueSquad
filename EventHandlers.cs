@@ -279,7 +279,7 @@ namespace UIURescueSquad
 
         public void OnChanging(ChangingRoleEventArgs ev)
         {
-            if (uiuPlayers.Contains(ev.Player) && ev.Player.Role != RoleType.Spectator)
+            if (uiuPlayers.Contains(ev.Player) && ev.Player.Role != RoleType.Spectator && ev.Player.Role != RoleType.None)
             {
                 KillUIU(ev.Player);
             }
