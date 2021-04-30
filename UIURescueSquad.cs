@@ -1,49 +1,47 @@
-﻿using System;
-using Exiled.API.Features;
-using HarmonyLib;
-using Exiled.Loader;
-
-using PlayerEvent = Exiled.Events.Handlers.Player;
-using ServerEvent = Exiled.Events.Handlers.Server;
-using MapEvent = Exiled.Events.Handlers.Map;
-
-namespace UIURescueSquad
+﻿namespace UIURescueSquad
 {
-    public class UIURescueSquad : Plugin<Config>
+    using System;
+    using Exiled.API.Features;
+    using HarmonyLib;
+
+    using MapEvent = Exiled.Events.Handlers.Map;
+    using PlayerEvent = Exiled.Events.Handlers.Player;
+    using ServerEvent = Exiled.Events.Handlers.Server;
+
+    /// <summary>
+    /// The main class which inherits <see cref="Plugin{TConfig}"/>.
+    /// </summary>
+    public class UIURescueSquad : Plugin<Configs.Config>
     {
-        public static UIURescueSquad Singleton;
+        /// <inheritdoc/>
+        public override string Name { get; } = "UIURescueSquad";
+
+        /// <inheritdoc/>
+        public override string Author { get; } = "JesusQC, maintained by Michal78900";
+
+        /// <inheritdoc/>
+        public override string Prefix { get; } = "UIURescueSquad";
+
+        /// <inheritdoc/>
+        public override Version Version { get; } = new Version(2, 3, 0);
+
+        /// <inheritdoc/>
+        public override Version RequiredExiledVersion => new Version(2, 10, 0);
+
+        /// <inheritdoc/>
+        public static UIURescueSquad Instance;
 
         private Harmony hInstance;
 
-        public override string Name { get; } = "UIU Rescue Squad";
-        public override string Author { get; } = "JesusQC";
-        public override string Prefix { get; } = "UIURescueSquad";
-        public override Version Version { get; } = new Version(2, 2, 0);
-        public override Version RequiredExiledVersion => new Version(2, 8, 0);
-
-        public EventHandlers EventHandlers;
-
-        public static bool IsCustomItems = false;
-
+        /// <inheritdoc/>
         public override void OnEnabled()
         {
-            Singleton = this;
-            EventHandlers = new EventHandlers(this);
+            Instance = this;
 
             hInstance = new Harmony($"jesus.uiurescuesquad-{DateTime.Now.Ticks}");
             hInstance.PatchAll();
 
-            foreach (var plugin in Loader.Plugins)
-            {
-                if (plugin.Name.ToLower() == "customitems" && plugin.Config.IsEnabled)
-                {
-                    IsCustomItems = true;
-                    Log.Debug("CustomItems plugin detected!", Config.Debug);
-                    break;
-                }
-            }
-
-            MapEvent.AnnouncingNtfEntrance += EventHandlers.OnAnnouncingMTF;
+            MapEvent.AnnouncingNtfEntrance += EventHandlers.OnAnnouncingNTF;
 
             ServerEvent.RespawningTeam += EventHandlers.OnTeamRespawn;
             ServerEvent.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
@@ -55,9 +53,11 @@ namespace UIURescueSquad
 
             base.OnEnabled();
         }
+
+        /// <inheritdoc/>
         public override void OnDisabled()
         {
-            MapEvent.AnnouncingNtfEntrance -= EventHandlers.OnAnnouncingMTF;
+            MapEvent.AnnouncingNtfEntrance -= EventHandlers.OnAnnouncingNTF;
 
             ServerEvent.RespawningTeam -= EventHandlers.OnTeamRespawn;
             ServerEvent.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
@@ -68,8 +68,7 @@ namespace UIURescueSquad
             PlayerEvent.Died -= EventHandlers.OnDied;
 
             hInstance.UnpatchAll();
-            EventHandlers = null;
-            Singleton = null;
+            Instance = null;
 
             base.OnDisabled();
         }

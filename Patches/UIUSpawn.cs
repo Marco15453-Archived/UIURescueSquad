@@ -1,22 +1,29 @@
-﻿using Exiled.API.Features;
-using HarmonyLib;
-using System;
-
-namespace UIURescueSquad.Patches
+﻿namespace UIURescueSquad.Patches
 {
-    [HarmonyPatch(typeof(Respawning.RespawnTickets), nameof(Respawning.RespawnTickets.DrawRandomTeam))]
+    #pragma warning disable SA1313
+
+    using System;
+    using Exiled.API.Features;
+    using HarmonyLib;
+    using Respawning;
+
+    /// <summary>
+    /// Handles calling <see cref="EventHandlers.CalculateChance"/> when <see cref="SpawnableTeamType"/> is choosed.
+    /// </summary>
+    [HarmonyPatch(typeof(RespawnTickets), nameof(RespawnTickets.DrawRandomTeam))]
     public class UIUSpawn
     {
-        public static void Postfix(ref Respawning.SpawnableTeamType __result)
+        /// <inheritdoc/>
+        public static void Postfix(ref SpawnableTeamType __result)
         {
             try
             {
-                if (__result == Respawning.SpawnableTeamType.NineTailedFox)
+                if (__result == SpawnableTeamType.NineTailedFox)
                 {
-                    UIURescueSquad.Singleton.EventHandlers.CalculateChance();
+                    EventHandlers.CalculateChance();
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.Error(e);
             }

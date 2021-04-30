@@ -1,60 +1,72 @@
-﻿using System;
-using System.Collections.Generic;
-using Exiled.API.Features;
-using Exiled.Events.EventArgs;
-using MEC;
-using Respawning;
-using UnityEngine;
-
-namespace UIURescueSquad
+﻿namespace UIURescueSquad
 {
+#pragma warning disable SA1202
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Configs;
+    using Exiled.API.Extensions;
+    using Exiled.API.Features;
+    using Exiled.CustomItems.API.Features;
+    using Exiled.Events.EventArgs;
+    using MEC;
+    using Respawning;
+    using UnityEngine;
+
+    /// <summary>
+    /// EventHandlers and Methods which UIURescueSquad uses.
+    /// </summary>
     public partial class EventHandlers
     {
-        private readonly UIURescueSquad plugin;
-        public EventHandlers(UIURescueSquad plugin) => this.plugin = plugin;
+        private static readonly Config Config = UIURescueSquad.Instance.Config;
 
+        /// <summary>
+        /// Is UIU spawnable in <see cref="Exiled.Events.Handlers.Server.OnRespawningTeam(RespawningTeamEventArgs)"/>.
+        /// </summary>
         public static bool IsSpawnable;
 
-        public static List<Player> uiuPlayers = new List<Player>();
+        /// <summary>
+        /// The maximum number of UIU players in next the respawn.
+        /// </summary>
+        public static uint MaxPlayers;
 
-        private int respawns = 0;
-        private int randnums;
+        /// <summary>
+        /// Players that are currently UIU.
+        /// </summary>
+        public static List<Player> UiuPlayers = new List<Player>();
 
-        private static System.Random rand = new System.Random();
+        private static System.Random rng = new System.Random();
+        private static int respawns = 0;
 
-        public void OnWaitingForPlayers()
+        /// <summary>
+        /// Handles UIU spawn chance with all other conditions.
+        /// </summary>
+        internal static void CalculateChance()
         {
-            uiuPlayers.Clear();
+            IsSpawnable = rng.Next(1, 101) <= Config.SpawnManager.Probability &&
+                respawns >= Config.SpawnManager.Respawns;
+
+            Log.Debug($"Is UIU spawnable: {IsSpawnable}", Config.Debug);
+        }
+
+        /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnWaitingForPlayers"/>
+        internal static void OnWaitingForPlayers()
+        {
+            UiuPlayers.Clear();
             respawns = 0;
+            MaxPlayers = Config.SpawnManager.MaxSquad;
         }
 
-        public void OnRoundStart()
+        /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnRoundStarted"/>
+        internal static void OnRoundStart()
         {
-            if (!string.IsNullOrEmpty(plugin.Config.GuardUnitColor))
-            {
-                try
-                {
-                    Map.ChangeUnitColor(0, plugin.Config.GuardUnitColor);
-                }
-                catch (Exception) {}
-            }
+            if (!string.IsNullOrEmpty(Config.TeamColors.GuardUnitColor))
+                Map.ChangeUnitColor(0, Config.TeamColors.GuardUnitColor);
         }
 
-        public void CalculateChance()
-        {
-            randnums = rand.Next(1, 101);
-            if (randnums <= plugin.Config.Probability &&
-                respawns >= plugin.Config.Respawns)
-            {
-                IsSpawnable = true;
-            }
-            else
-            {
-                IsSpawnable = false;
-            }
-        }
-
-        public void OnTeamRespawn(RespawningTeamEventArgs ev)
+        /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnRespawningTeam(RespawningTeamEventArgs)"/>
+        internal static void OnTeamRespawn(RespawningTeamEventArgs ev)
         {
             if (ev.NextKnownTeam == SpawnableTeamType.NineTailedFox)
             {
@@ -62,226 +74,139 @@ namespace UIURescueSquad
 
                 if (IsSpawnable)
                 {
-                    if (plugin.Config.AnnouncementText != null)
+                    bool prioritySpawn = RespawnManager.Singleton._prioritySpawn;
+
+                    if (prioritySpawn)
+                        ev.Players.OrderBy((x) => x.ReferenceHub.characterClassManager.DeathTime);
+
+                    for (int i = ev.Players.Count; i > MaxPlayers; i--)
                     {
-                        Map.ClearBroadcasts();
-                        Map.Broadcast(plugin.Config.AnnouncementTime, plugin.Config.AnnouncementText);
+                        Player player = prioritySpawn ? ev.Players.Last() : ev.Players[rng.Next(ev.Players.Count)];
+                        ev.Players.Remove(player);
                     }
 
-                    if (plugin.Config.DropEnabled)
+                    List<Player> uiuPlayers = new List<Player>(ev.Players);
+
+                    Timing.CallDelayed(0f, () =>
                     {
-                        foreach (string item in plugin.Config.dropItems)
+                        foreach (Player player in uiuPlayers)
                         {
-                            Vector3 spawnPos = Map.GetRandomSpawnPoint(RoleType.NtfCadet);
+                            SpawnPlayer(player);
+                        }
 
-                            try
-                            {
-                                ItemType parsedItem = (ItemType)Enum.Parse(typeof(ItemType), item, true);
+                        if (Config.SpawnManager.AnnouncementText != null)
+                        {
+                            Map.ClearBroadcasts();
+                            Map.Broadcast(Config.SpawnManager.AnnouncementTime, Config.SpawnManager.AnnouncementText);
+                        }
 
-                                Exiled.API.Extensions.Item.Spawn(parsedItem, Exiled.API.Extensions.Item.GetDefaultDurability(parsedItem), spawnPos);
-                            }
-                            catch (Exception)
+                        if (Config.SupplyDrop.DropEnabled)
+                        {
+                            foreach (var item in Config.SupplyDrop.DropItems)
                             {
-                                if (!UIURescueSquad.IsCustomItems)
-                                    Log.Error($"\"{item}\" is not a valid item name.");
+                                Vector3 spawnPos = Role.GetRandomSpawnPoint(RoleType.NtfCadet);
+
+                                if (Enum.TryParse(item.Key, out ItemType parsedItem))
+                                {
+                                    Item.Spawn(parsedItem, Item.GetDefaultDurability(parsedItem), spawnPos);
+                                }
                                 else
-                                    CustomItemHandler(spawnPos, item);
-                            }
-                        }
-                    }
-
-                    List<Player> ntfPlayers = new List<Player>(ev.Players);
-
-                    ev.Players.Clear();
-
-                    for (int i = 0; i < plugin.Config.MaxSquad && ntfPlayers.Count > 0; i++)
-                    {
-                        Player player = ntfPlayers[rand.Next(ntfPlayers.Count)];
-                        ntfPlayers.Remove(player);
-                        ev.Players.Add(player);
-                    }
-
-                    foreach (Player player in ev.Players)
-                    {
-                        uiuPlayers.Add(player);
-
-                        if (plugin.Config.UiuBroadcast != null && plugin.Config.UiuBroadcastTime != null)
-                        {
-                            if (plugin.Config.UseHintsHere)
-                            {
-                                player.ShowHint(plugin.Config.UiuBroadcast, plugin.Config.UiuBroadcastTime);
-                            }
-                            else
-                            {
-                                player.ClearBroadcasts();
-                                player.Broadcast(plugin.Config.UiuBroadcastTime, plugin.Config.UiuBroadcast);
+                                {
+                                    CustomItem.TrySpawn(item.Key, spawnPos, out Pickup pickup);
+                                }
                             }
                         }
 
-                        Timing.CallDelayed(0.01f, () =>
+                        if (!string.IsNullOrEmpty(Config.TeamColors.UiuUnitColor))
                         {
-                            player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Nickname;
-                            player.ReferenceHub.nicknameSync.ShownPlayerInfo &= ~PlayerInfoArea.Role;
-
-                            switch (player.Role)
+                            Timing.CallDelayed(Timing.WaitUntilTrue(() => RespawnManager.Singleton.NamingManager.AllUnitNames.Count >= respawns), () =>
                             {
-                                case RoleType.NtfCadet:
-                                    {
-                                        player.MaxHealth = plugin.Config.UiuSoldierLife;
-                                        player.Health = plugin.Config.UiuSoldierLife;
+                                Map.ChangeUnitColor(respawns, Config.TeamColors.UiuUnitColor);
+                            });
+                        }
+                    });
 
-                                        if (plugin.Config.UiuSoldierInventory.Count > 0)
-                                            GiveCustomInventory(plugin.Config.UiuSoldierInventory, player);
-
-                                        foreach (var ammo in plugin.Config.UiuSoldierAmmo)
-                                        {
-                                            player.Ammo[(int)ammo.Key] = ammo.Value;
-                                        }
-
-                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UiuSoldierRank}";
-                                        break;
-                                    }
-
-                                case RoleType.NtfLieutenant:
-                                    {
-                                        player.MaxHealth = plugin.Config.UiuAgentLife;
-                                        player.Health = plugin.Config.UiuAgentLife;
-
-                                        if (plugin.Config.UiuAgentInventory.Count > 0)
-                                            GiveCustomInventory(plugin.Config.UiuAgentInventory, player);
-
-                                        foreach (var ammo in plugin.Config.UIUAgentAmmo)
-                                        {
-                                            player.Ammo[(int)ammo.Key] = ammo.Value;
-                                        }
-
-                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UiuAgentRank}";
-                                        break;
-                                    }
-
-                                case RoleType.NtfCommander:
-                                    {
-                                        player.MaxHealth = plugin.Config.UiuLeaderLife;
-                                        player.Health = plugin.Config.UiuLeaderLife;
-
-                                        if (plugin.Config.UiuLeaderInventory.Count > 1)
-                                            GiveCustomInventory(plugin.Config.UiuLeaderInventory, player);
-
-                                        foreach (var ammo in plugin.Config.UiuLeaderAmmo)
-                                        {
-                                            player.Ammo[(int)ammo.Key] = ammo.Value;
-                                        }
-
-                                        player.CustomInfo = $"{player.Nickname}\n{plugin.Config.UiuLeaderRank}";
-                                        break;
-                                    }
-                            }
-                            Timing.CallDelayed(0.4f, () => { player.Position = new Vector3(plugin.Config.spawnPosX, plugin.Config.spawnPosY, plugin.Config.spawnPosZ); });
-                        });
-                    }
+                    MaxPlayers = Config.SpawnManager.MaxSquad;
+                }
+                else if (!string.IsNullOrEmpty(Config.TeamColors.NtfUnitColor))
+                {
+                    Timing.CallDelayed(Timing.WaitUntilTrue(() => RespawnManager.Singleton.NamingManager.AllUnitNames.Count >= respawns), () =>
+                    {
+                        Map.ChangeUnitColor(respawns, Config.TeamColors.NtfUnitColor);
+                    });
                 }
             }
         }
 
-        public void OnAnnouncingMTF(AnnouncingNtfEntranceEventArgs ev)
+        /// <inheritdoc cref="Exiled.Events.Handlers.Map.OnAnnouncingNtfEntrance(AnnouncingNtfEntranceEventArgs) />
+        internal static void OnAnnouncingNTF(AnnouncingNtfEntranceEventArgs ev)
         {
             string cassieMessage = string.Empty;
 
             if (!IsSpawnable)
             {
-                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.NtfAnnouncmentCassieNoScp))
+                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(Config.SpawnManager.NtfAnnouncmentCassieNoScp))
                 {
                     ev.IsAllowed = false;
 
-                    cassieMessage = plugin.Config.NtfAnnouncmentCassieNoScp;
+                    cassieMessage = Config.SpawnManager.NtfAnnouncmentCassieNoScp;
                 }
-
-                else
-
-                if (!string.IsNullOrEmpty(plugin.Config.NtfAnnouncementCassie))
+                else if (!string.IsNullOrEmpty(Config.SpawnManager.NtfAnnouncementCassie))
                 {
                     ev.IsAllowed = false;
 
-                    cassieMessage = plugin.Config.NtfAnnouncementCassie;
+                    cassieMessage = Config.SpawnManager.NtfAnnouncementCassie;
                 }
-                
-                if (!string.IsNullOrEmpty(plugin.Config.NtfUnitColor))
-                {
-                    try
-                    {
-                        Map.ChangeUnitColor(respawns, plugin.Config.NtfUnitColor);
-                    }
-                    catch (Exception) { }
-                }
-
             }
-
-            if (IsSpawnable && respawns >= plugin.Config.Respawns + 1)
+            else
             {
-                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.UiuAnnouncmentCassieNoScp))
+                ev.IsAllowed = false;
+
+                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncmentCassieNoScp))
                 {
-                    ev.IsAllowed = false;
-
-                    cassieMessage = plugin.Config.UiuAnnouncmentCassieNoScp;
+                    cassieMessage = Config.SpawnManager.UiuAnnouncmentCassieNoScp;
                 }
-
-                else
-
-                if (!string.IsNullOrEmpty(plugin.Config.UiuAnnouncementCassie))
+                else if (ev.ScpsLeft > 1 && !string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncementCassie))
                 {
-                    ev.IsAllowed = false;
-
-                    cassieMessage = plugin.Config.UiuAnnouncementCassie;
+                    cassieMessage = Config.SpawnManager.UiuAnnouncementCassie;
                 }
-
-
-                // HIGHLY EXPERIMENTAL FIX. NEEDS TESTING.
-                if (!string.IsNullOrEmpty(plugin.Config.UiuUnitColor))
-                {
-                TryAgain:
-
-                    try
-                    {
-                        Map.ChangeUnitColor(respawns, plugin.Config.UiuUnitColor);
-                    }
-                    catch (Exception)
-                    {
-                        goto TryAgain;
-                    }
-                }
-
             }
 
             cassieMessage = cassieMessage.Replace("{scpnum}", $"{ev.ScpsLeft} scpsubject");
-            if (ev.ScpsLeft > 1) cassieMessage = cassieMessage.Replace("scpsubject", "scpsubjects");
+
+            if (ev.ScpsLeft > 1)
+                cassieMessage = cassieMessage.Replace("scpsubject", "scpsubjects");
 
             cassieMessage = cassieMessage.Replace("{designation}", $"nato_{ev.UnitName[0]} {ev.UnitNumber}");
 
             if (!string.IsNullOrEmpty(cassieMessage))
-                Cassie.GlitchyMessage(cassieMessage, 0.05f, 0.05f);
+                Cassie.GlitchyMessage(cassieMessage, Config.SpawnManager.GlitchChance, Config.SpawnManager.JamChance);
         }
 
-        public void OnDestroy(DestroyingEventArgs ev)
+        /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnDestroying(DestroyingEventArgs)"/>
+        internal static void OnDestroy(DestroyingEventArgs ev)
         {
-            if (uiuPlayers.Contains(ev.Player))
+            if (UiuPlayers.Contains(ev.Player))
             {
-                KillUIU(ev.Player);
+                DestroyUIU(ev.Player);
             }
         }
 
-        public void OnDied(DiedEventArgs ev)
+        /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnDied(DiedEventArgs)"/>
+        internal static void OnDied(DiedEventArgs ev)
         {
-            if (uiuPlayers.Contains(ev.Target))
+            if (UiuPlayers.Contains(ev.Target))
             {
-                KillUIU(ev.Target);
+                DestroyUIU(ev.Target);
             }
         }
 
-        public void OnChanging(ChangingRoleEventArgs ev)
+        /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnChangingRole(ChangingRoleEventArgs)"/>
+        internal static void OnChanging(ChangingRoleEventArgs ev)
         {
-            if (uiuPlayers.Contains(ev.Player) && ev.Player.Role != RoleType.Spectator && ev.Player.Role != RoleType.None)
+            if (UiuPlayers.Contains(ev.Player) && ev.NewRole.GetTeam() != Team.MTF)
             {
-                KillUIU(ev.Player);
+                DestroyUIU(ev.Player);
             }
         }
     }
