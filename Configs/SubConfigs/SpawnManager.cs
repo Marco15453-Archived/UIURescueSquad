@@ -93,7 +93,7 @@
         /// <summary>
         /// Gets an UIU spawn broadcast time.
         /// </summary>
-        [Description("UIU Player broadcast (null to disable it)")]
+        [Description("UIU Player broadcast time")]
         public ushort UiuBroadcastTime { get; private set; } = 10;
     }
 }
