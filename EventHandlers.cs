@@ -116,15 +116,15 @@
                                 }
                             }
                         }
-
-                        if (!string.IsNullOrEmpty(Config.TeamColors.UiuUnitColor))
-                        {
-                            Timing.CallDelayed(Timing.WaitUntilTrue(() => RespawnManager.Singleton.NamingManager.AllUnitNames.Count >= respawns), () =>
-                            {
-                                Map.ChangeUnitColor(respawns, Config.TeamColors.UiuUnitColor);
-                            });
-                        }
                     });
+
+                    if (!string.IsNullOrEmpty(Config.TeamColors.UiuUnitColor))
+                    {
+                        Timing.CallDelayed(Timing.WaitUntilTrue(() => RespawnManager.Singleton.NamingManager.AllUnitNames.Count >= respawns), () =>
+                        {
+                            Map.ChangeUnitColor(respawns, Config.TeamColors.UiuUnitColor);
+                        });
+                    }
 
                     MaxPlayers = Config.SpawnManager.MaxSquad;
                 }
