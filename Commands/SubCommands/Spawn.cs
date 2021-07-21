@@ -57,7 +57,6 @@
                         }
                         else
                         {
-                            Log.Info(uiuType);
                             SpawnPlayer(player, uiuType);
 
                             response = $"{player.Nickname} is now an UIU {uiuType}.";

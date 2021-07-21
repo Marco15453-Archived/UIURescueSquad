@@ -1,9 +1,7 @@
 ﻿namespace UIURescueSquad
 {
-    using System;
-    using System.Collections.Generic;
     using Exiled.API.Features;
-    using Exiled.CustomItems.API.Features;
+    using Exiled.CustomItems.API;
     using MEC;
     using static API;
 
@@ -25,8 +23,7 @@
                 }
             }
 
-            if (!UiuPlayers.Contains(player))
-                UiuPlayers.Add(player);
+            player.SessionVariables.Add("IsUIU", uiuType);
 
             if (!string.IsNullOrEmpty(Config.SpawnManager.UiuBroadcast))
             {
@@ -54,8 +51,7 @@
 
                             player.Health = Config.UiuSoldier.Health;
 
-                            if (Config.UiuSoldier.Inventory.Count > 0)
-                                GiveCustomInventory(Config.UiuSoldier.Inventory, player);
+                            player.ResetInventory(Config.UiuSoldier.Inventory);
 
                             foreach (var ammo in Config.UiuSoldier.Ammo)
                             {
@@ -73,8 +69,7 @@
 
                             player.Health = Config.UiuAgent.Health;
 
-                            if (Config.UiuAgent.Inventory.Count > 0)
-                                GiveCustomInventory(Config.UiuAgent.Inventory, player);
+                            player.ResetInventory(Config.UiuAgent.Inventory);
 
                             foreach (var ammo in Config.UiuAgent.Ammo)
                             {
@@ -92,8 +87,7 @@
 
                             player.Health = Config.UiuLeader.Health;
 
-                            if (Config.UiuLeader.Inventory.Count > 0)
-                                GiveCustomInventory(Config.UiuLeader.Inventory, player);
+                            player.ResetInventory(Config.UiuLeader.Inventory);
 
                             foreach (var ammo in Config.UiuLeader.Ammo)
                             {
@@ -115,28 +109,10 @@
 
                 Timing.CallDelayed(0.4f, () =>
                 {
-                    player.Position = Config.SpawnManager.SpawnPos.ToVector3();
+                    player.Position = Config.SpawnManager.SpawnPos;
                     player.IsGodModeEnabled = false;
                 });
             });
-        }
-
-        // TEMP!!!
-        internal static void GiveCustomInventory(List<string> inventory, Player player)
-        {
-            player.ClearInventory();
-
-            foreach (string item in inventory)
-            {
-                if (Enum.TryParse(item, out ItemType parsedItem))
-                {
-                    player.AddItem(parsedItem);
-                }
-                else
-                {
-                    CustomItem.TryGive(player, item, false);
-                }
-            }
         }
 
         /// <summary>
@@ -145,13 +121,13 @@
         /// <param name="player">The player to remove.</param>
         internal static void DestroyUIU(Player player)
         {
+            player.SessionVariables.Remove("IsUIU");
+
             player.MaxHealth = default;
 
             player.CustomInfo = string.Empty;
             player.ReferenceHub.nicknameSync.ShownPlayerInfo |= PlayerInfoArea.Nickname;
             player.ReferenceHub.nicknameSync.ShownPlayerInfo |= PlayerInfoArea.Role;
-
-            UiuPlayers.Remove(player);
         }
     }
 }

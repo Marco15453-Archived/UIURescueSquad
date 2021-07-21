@@ -13,6 +13,7 @@
     using MEC;
     using Respawning;
     using UnityEngine;
+    using static API;
 
     /// <summary>
     /// EventHandlers and Methods which UIURescueSquad uses.
@@ -31,11 +32,6 @@
         /// </summary>
         public static uint MaxPlayers;
 
-        /// <summary>
-        /// Players that are currently UIU.
-        /// </summary>
-        public static List<Player> UiuPlayers = new List<Player>();
-
         private static System.Random rng = new System.Random();
         private static int respawns = 0;
 
@@ -53,7 +49,6 @@
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnWaitingForPlayers"/>
         internal static void OnWaitingForPlayers()
         {
-            UiuPlayers.Clear();
             respawns = 0;
             MaxPlayers = Config.SpawnManager.MaxSquad;
         }
@@ -160,14 +155,16 @@
             }
             else
             {
-                ev.IsAllowed = false;
-
                 if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncmentCassieNoScp))
                 {
+                    ev.IsAllowed = false;
+
                     cassieMessage = Config.SpawnManager.UiuAnnouncmentCassieNoScp;
                 }
                 else if (ev.ScpsLeft > 1 && !string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncementCassie))
                 {
+                    ev.IsAllowed = false;
+
                     cassieMessage = Config.SpawnManager.UiuAnnouncementCassie;
                 }
             }
@@ -186,7 +183,7 @@
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnDestroying(DestroyingEventArgs)"/>
         internal static void OnDestroy(DestroyingEventArgs ev)
         {
-            if (UiuPlayers.Contains(ev.Player))
+            if (IsUiu(ev.Player))
             {
                 DestroyUIU(ev.Player);
             }
@@ -195,7 +192,7 @@
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnDied(DiedEventArgs)"/>
         internal static void OnDied(DiedEventArgs ev)
         {
-            if (UiuPlayers.Contains(ev.Target))
+            if (IsUiu(ev.Target))
             {
                 DestroyUIU(ev.Target);
             }
@@ -204,7 +201,7 @@
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnChangingRole(ChangingRoleEventArgs)"/>
         internal static void OnChanging(ChangingRoleEventArgs ev)
         {
-            if (UiuPlayers.Contains(ev.Player) && ev.NewRole.GetTeam() != Team.MTF)
+            if (IsUiu(ev.Player) && ev.NewRole.GetTeam() != Team.MTF)
             {
                 DestroyUIU(ev.Player);
             }

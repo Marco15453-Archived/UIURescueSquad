@@ -36,7 +36,7 @@
 
             foreach (var uiuPly in uiuPlayers)
             {
-                message += $"- ({uiuPly.Id}) {uiuPly.Nickname} UIU {GetUIURole(uiuPly.Role)} {uiuPly.ReferenceHub.characterClassManager.NetworkCurUnitName}\n";
+                message += $"- ({uiuPly.Id}) {uiuPly.Nickname} UIU {GetUIURole(uiuPly.Role)} {uiuPly.UnitName}\n";
             }
 
             response = message;

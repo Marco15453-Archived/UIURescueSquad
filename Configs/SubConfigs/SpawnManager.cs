@@ -1,7 +1,7 @@
 ﻿namespace UIURescueSquad.Configs.SubConfigs
 {
     using System.ComponentModel;
-    using Serializable;
+    using UnityEngine;
 
     /// <summary>
     /// Configs for UIU spawning options.
@@ -30,7 +30,7 @@
         /// Gets the UIU spawn position.
         /// </summary>
         [Description("UIU Rescue squad spawn position:")]
-        public Vector SpawnPos { get; private set; } = new Vector { X = 170f, Y = 985f, Z = 29f };
+        public Vector3 SpawnPos { get; private set; } = new Vector3(170f, 985f, 29f);
 
         /// <summary>
         /// Gets the UIU announcement message.

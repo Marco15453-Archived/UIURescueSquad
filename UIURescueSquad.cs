@@ -23,10 +23,10 @@
         public override string Prefix { get; } = "UIURescueSquad";
 
         /// <inheritdoc/>
-        public override Version Version { get; } = new Version(2, 3, 0);
+        public override Version Version { get; } = new Version(2, 4, 0);
 
         /// <inheritdoc/>
-        public override Version RequiredExiledVersion => new Version(2, 10, 0);
+        public override Version RequiredExiledVersion => new Version(2, 11, 1);
 
         /// <inheritdoc/>
         public static UIURescueSquad Instance;

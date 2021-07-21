@@ -1,6 +1,7 @@
 ﻿namespace UIURescueSquad
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Exiled.API.Features;
 
     /// <summary>
@@ -15,7 +16,7 @@
         /// <returns><see langword="true"/> if player is UIU, <see langword="false"/> if not.</returns>
         public static bool IsUiu(Player player)
         {
-            return EventHandlers.UiuPlayers.Contains(player);
+            return player.SessionVariables.ContainsKey("IsUIU");
         }
 
         /// <summary>
@@ -51,33 +52,33 @@
         /// <returns><see cref="List{Player}"/> of all alive UIU players.</returns>
         public static List<Player> GetUIUPlayers()
         {
-            return EventHandlers.UiuPlayers;
+            return Player.List.Where(x => x.SessionVariables.ContainsKey("IsUIU")).ToList();
         }
+    }
+
+    /// <summary>
+    /// Basically <see cref="RoleType"/>, but for UIU.
+    /// </summary>
+    public enum UiuType
+    {
+        /// <summary>
+        /// RoleType isn't a UIU role.
+        /// </summary>
+        None = -1,
 
         /// <summary>
-        /// Basically <see cref="RoleType"/>, but for UIU.
+        /// Equivalent of <see cref="RoleType.NtfCadet"/>
         /// </summary>
-        public enum UiuType
-        {
-            /// <summary>
-            /// RoleType isn't a UIU role.
-            /// </summary>
-            None = -1,
+        Soldier = 0,
 
-            /// <summary>
-            /// Equivalent of <see cref="RoleType.NtfCadet"/>
-            /// </summary>
-            Soldier = 0,
+        /// <summary>
+        /// Equivalent of <see cref="RoleType.NtfLieutenant"/>
+        /// </summary>
+        Agent = 1,
 
-            /// <summary>
-            /// Equivalent of <see cref="RoleType.NtfLieutenant"/>
-            /// </summary>
-            Agent = 1,
-
-            /// <summary>
-            /// Equivalent of <see cref="RoleType.NtfCommander"/>
-            /// </summary>
-            Leader = 2,
-        }
+        /// <summary>
+        /// Equivalent of <see cref="RoleType.NtfCommander"/>
+        /// </summary>
+        Leader = 2,
     }
 }
