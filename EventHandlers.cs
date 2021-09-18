@@ -3,11 +3,11 @@
 #pragma warning disable SA1202
 
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Configs;
     using Exiled.API.Extensions;
     using Exiled.API.Features;
+    using Exiled.API.Features.Items;
     using Exiled.CustomItems.API.Features;
     using Exiled.Events.EventArgs;
     using MEC;
@@ -15,13 +15,13 @@
     using UnityEngine;
     using static API;
 
+    using Random = UnityEngine.Random;
+
     /// <summary>
     /// EventHandlers and Methods which UIURescueSquad uses.
     /// </summary>
     public partial class EventHandlers
     {
-        private static readonly Config Config = UIURescueSquad.Instance.Config;
-
         /// <summary>
         /// Is UIU spawnable in <see cref="Exiled.Events.Handlers.Server.OnRespawningTeam(RespawningTeamEventArgs)"/>.
         /// </summary>
@@ -32,7 +32,6 @@
         /// </summary>
         public static uint MaxPlayers;
 
-        private static System.Random rng = new System.Random();
         private static int respawns = 0;
 
         /// <summary>
@@ -40,7 +39,7 @@
         /// </summary>
         internal static void CalculateChance()
         {
-            IsSpawnable = rng.Next(1, 101) <= Config.SpawnManager.Probability &&
+            IsSpawnable = Random.Range(1, 101) <= Config.SpawnManager.Probability &&
                 respawns >= Config.SpawnManager.Respawns;
 
             Log.Debug($"Is UIU spawnable: {IsSpawnable}", Config.Debug);
@@ -76,15 +75,13 @@
 
                     for (int i = ev.Players.Count; i > MaxPlayers; i--)
                     {
-                        Player player = prioritySpawn ? ev.Players.Last() : ev.Players[rng.Next(ev.Players.Count)];
+                        Player player = prioritySpawn ? ev.Players.Last() : ev.Players[Random.Range(0, ev.Players.Count)];
                         ev.Players.Remove(player);
                     }
 
-                    List<Player> uiuPlayers = new List<Player>(ev.Players);
-
                     Timing.CallDelayed(0f, () =>
                     {
-                        foreach (Player player in uiuPlayers)
+                        foreach (Player player in ev.Players)
                         {
                             SpawnPlayer(player);
                         }
@@ -99,15 +96,16 @@
                         {
                             foreach (var item in Config.SupplyDrop.DropItems)
                             {
-                                Vector3 spawnPos = Role.GetRandomSpawnPoint(RoleType.NtfCadet);
+                                Vector3 spawnPos = RoleType.NtfPrivate.GetRandomSpawnProperties().Item1;
 
                                 if (Enum.TryParse(item.Key, out ItemType parsedItem))
                                 {
-                                    Item.Spawn(parsedItem, Item.GetDefaultDurability(parsedItem), spawnPos);
+                                    Item item1 = new Item(parsedItem);
+                                    item1.Spawn(spawnPos, Random.rotation);
                                 }
                                 else
                                 {
-                                    CustomItem.TrySpawn(item.Key, spawnPos, out Pickup pickup);
+                                    CustomItem.TrySpawn(item.Key, spawnPos, out Pickup _);
                                 }
                             }
                         }
@@ -121,7 +119,7 @@
                         });
                     }
 
-                    MaxPlayers = Config.SpawnManager.MaxSquad;
+                    Timing.CallDelayed(1f, () => IsSpawnable = false);
                 }
                 else if (!string.IsNullOrEmpty(Config.TeamColors.NtfUnitColor))
                 {
@@ -206,5 +204,7 @@
                 DestroyUIU(ev.Player);
             }
         }
+
+        private static readonly Config Config = UIURescueSquad.Instance.Config;
     }
 }

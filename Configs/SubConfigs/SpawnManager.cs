@@ -48,12 +48,12 @@
         /// Gets the UIU Cassie entrance message.
         /// </summary>
         [Description("UIU entrance Cassie Message")]
-        public string UiuAnnouncementCassie { get; private set; } = "The U I U Squad HasEntered AwaitingRecontainment {scpnum}";
+        public string UiuAnnouncementCassie { get; private set; } = "The U I U Squad designated {designation} HasEntered AwaitingRecontainment {scpnum}";
 
         /// <summary>
         /// Gets the UIU Cassie entrance message, when there aren't any SCPs.
         /// </summary>
-        public string UiuAnnouncmentCassieNoScp { get; private set; } = "The U I U Squad HasEntered NoSCPsLeft";
+        public string UiuAnnouncmentCassieNoScp { get; private set; } = "The U I U Squad designated {designation} HasEntered NoSCPsLeft";
 
         /// <summary>
         /// Gets the custom NTF Cassie entrance message.

@@ -1,5 +1,6 @@
 ﻿namespace UIURescueSquad
 {
+    using Exiled.API.Extensions;
     using Exiled.API.Features;
     using Exiled.CustomItems.API;
     using MEC;
@@ -10,6 +11,11 @@
     /// </summary>
     public partial class EventHandlers
     {
+        /// <summary>
+        /// Spawns a player as UIU.
+        /// </summary>
+        /// <param name="player">The player to spawn.</param>
+        /// <param name="uiuType">The UIU role of the spawned player.</param>
         internal static void SpawnPlayer(Player player, UiuType uiuType = UiuType.None)
         {
             if (uiuType == UiuType.None)
@@ -46,8 +52,8 @@
                 {
                     case UiuType.Soldier:
                         {
-                            if (player.Role != RoleType.NtfCadet)
-                                player.Role = RoleType.NtfCadet;
+                            if (player.Role != RoleType.NtfPrivate)
+                                player.Role = RoleType.NtfPrivate;
 
                             player.Health = Config.UiuSoldier.Health;
 
@@ -55,7 +61,7 @@
 
                             foreach (var ammo in Config.UiuSoldier.Ammo)
                             {
-                                player.Ammo[(int)ammo.Key] = ammo.Value;
+                                player.Ammo[ammo.Key.GetItemType()] = ammo.Value;
                             }
 
                             player.CustomInfo = $"{player.Nickname}\n{Config.UiuSoldier.Rank}";
@@ -64,8 +70,8 @@
 
                     case UiuType.Agent:
                         {
-                            if (player.Role != RoleType.NtfLieutenant)
-                                player.Role = RoleType.NtfLieutenant;
+                            if (player.Role != RoleType.NtfSergeant)
+                                player.Role = RoleType.NtfSergeant;
 
                             player.Health = Config.UiuAgent.Health;
 
@@ -73,7 +79,7 @@
 
                             foreach (var ammo in Config.UiuAgent.Ammo)
                             {
-                                player.Ammo[(int)ammo.Key] = ammo.Value;
+                                player.Ammo[ammo.Key.GetItemType()] = ammo.Value;
                             }
 
                             player.CustomInfo = $"{player.Nickname}\n{Config.UiuAgent.Rank}";
@@ -82,8 +88,8 @@
 
                     case UiuType.Leader:
                         {
-                            if (player.Role != RoleType.NtfCommander)
-                                player.Role = RoleType.NtfCommander;
+                            if (player.Role != RoleType.NtfCaptain)
+                                player.Role = RoleType.NtfCaptain;
 
                             player.Health = Config.UiuLeader.Health;
 
@@ -91,7 +97,7 @@
 
                             foreach (var ammo in Config.UiuLeader.Ammo)
                             {
-                                player.Ammo[(int)ammo.Key] = ammo.Value;
+                                player.Ammo[ammo.Key.GetItemType()] = ammo.Value;
                             }
 
                             player.CustomInfo = $"{player.Nickname}\n{Config.UiuLeader.Rank}";

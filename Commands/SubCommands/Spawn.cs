@@ -93,7 +93,8 @@
                         }
                     }
 
-                default: response = "Invalid number of arguments."; return false;
+                default: response = "Invalid number of arguments.";
+                    return false;
             }
         }
     }

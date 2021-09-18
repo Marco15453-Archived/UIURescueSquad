@@ -41,17 +41,16 @@
         {
             Player player = Player.Get((sender as PlayerCommandSender).ReferenceHub);
 
-            string message = "\nPlease enter a valid subcommand:\n";
+            response = "\nPlease enter a valid subcommand:\n";
 
-            foreach (var command in AllCommands.ToList())
+            foreach (var command in AllCommands)
             {
                 if (player.CheckPermission($"sh.{command.Command}"))
                 {
-                    message += $"- {command.Command} ({command.Aliases[0]})\n";
+                    response += $"- {command.Command} ({command.Aliases[0]})\n";
                 }
             }
 
-            response = message;
             return false;
         }
     }

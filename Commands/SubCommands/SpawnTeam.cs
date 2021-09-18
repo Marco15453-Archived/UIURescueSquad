@@ -67,10 +67,15 @@
 
                     if (validPlayers >= num)
                     {
+                        uint prevValue = EventHandlers.MaxPlayers;
+
                         EventHandlers.IsSpawnable = true;
                         EventHandlers.MaxPlayers = num;
+
                         Respawn.ForceWave(SpawnableTeamType.NineTailedFox);
+
                         EventHandlers.IsSpawnable = false;
+                        EventHandlers.MaxPlayers = prevValue;
 
                         response = $"UIU Rescue Squad team with {num} players has been spawned.";
                         return true;

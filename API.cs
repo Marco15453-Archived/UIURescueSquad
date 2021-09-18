@@ -28,19 +28,21 @@
         {
             switch (roleType)
             {
-                case RoleType.NtfCadet: return UiuType.Soldier;
-                case RoleType.NtfLieutenant: return UiuType.Agent;
-                case RoleType.NtfCommander: return UiuType.Leader;
+                case RoleType.NtfPrivate:
+                    return UiuType.Soldier;
 
-                default: return UiuType.None;
+                case RoleType.NtfSergeant:
+                    return UiuType.Agent;
+
+                case RoleType.NtfCaptain:
+                    return UiuType.Leader;
+
+                default:
+                    return UiuType.None;
             }
         }
 
-        /// <summary>
-        /// Spawns a player as UIU.
-        /// </summary>
-        /// <param name="player">The player to spawn.</param>
-        /// <param name="uiuType">The UIU role of the spawned player.</param>
+        /// <inheritdoc cref="EventHandlers.SpawnPlayer(Player, UiuType)"/>
         public static void SpawnPlayer(Player player, UiuType uiuType)
         {
             EventHandlers.SpawnPlayer(player, uiuType);
@@ -67,17 +69,17 @@
         None = -1,
 
         /// <summary>
-        /// Equivalent of <see cref="RoleType.NtfCadet"/>
+        /// Equivalent of <see cref="RoleType.NtfPrivate"/>
         /// </summary>
         Soldier = 0,
 
         /// <summary>
-        /// Equivalent of <see cref="RoleType.NtfLieutenant"/>
+        /// Equivalent of <see cref="RoleType.NtfSergeant"/>
         /// </summary>
         Agent = 1,
 
         /// <summary>
-        /// Equivalent of <see cref="RoleType.NtfCommander"/>
+        /// Equivalent of <see cref="RoleType.NtfCaptain"/>
         /// </summary>
         Leader = 2,
     }

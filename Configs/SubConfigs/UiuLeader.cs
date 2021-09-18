@@ -5,7 +5,7 @@
     using Exiled.API.Enums;
 
     /// <summary>
-    /// Configs for UIU Leader, equivalent of <see cref="RoleType.NtfCommander"/>.
+    /// Configs for UIU Leader, equivalent of <see cref="RoleType.NtfCaptain"/>.
     /// </summary>
     public class UiuLeader
     {
@@ -22,20 +22,20 @@
         public List<string> Inventory { get; private set; } = new List<string>
         {
             "KeycardNTFLieutenant",
-            "GunProject90",
-            "GunUSP",
-            "Disarmer",
+            "GunCrossvec",
+            "GunCOM18",
             "Medkit",
             "Adrenaline",
             "Radio",
             "GrenadeFrag",
+            "ArmorCombat",
         };
 
         /// <summary>
         /// Gets UIU Leader ammo.
         /// </summary>
         [Description("UIU Leader ammo:")]
-        public Dictionary<AmmoType, uint> Ammo { get; private set; } = new Dictionary<AmmoType, uint>
+        public Dictionary<AmmoType, ushort> Ammo { get; private set; } = new Dictionary<AmmoType, ushort>
         {
             { AmmoType.Nato556, 80 },
             { AmmoType.Nato762, 0 },

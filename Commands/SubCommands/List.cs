@@ -30,16 +30,15 @@
                 return false;
             }
 
-            string message = "\nList of players that are UIU:\n";
+            response = "\nList of players that are UIU:\n";
 
             List<Player> uiuPlayers = GetUIUPlayers();
 
             foreach (var uiuPly in uiuPlayers)
             {
-                message += $"- ({uiuPly.Id}) {uiuPly.Nickname} UIU {GetUIURole(uiuPly.Role)} {uiuPly.UnitName}\n";
+                response += $"- ({uiuPly.Id}) {uiuPly.Nickname} UIU {GetUIURole(uiuPly.Role)} {uiuPly.UnitName}\n";
             }
 
-            response = message;
             return true;
         }
     }

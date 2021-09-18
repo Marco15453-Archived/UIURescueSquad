@@ -14,21 +14,6 @@
     public class UIURescueSquad : Plugin<Configs.Config>
     {
         /// <inheritdoc/>
-        public override string Name { get; } = "UIURescueSquad";
-
-        /// <inheritdoc/>
-        public override string Author { get; } = "JesusQC, maintained by Michal78900";
-
-        /// <inheritdoc/>
-        public override string Prefix { get; } = "UIURescueSquad";
-
-        /// <inheritdoc/>
-        public override Version Version { get; } = new Version(2, 4, 0);
-
-        /// <inheritdoc/>
-        public override Version RequiredExiledVersion => new Version(2, 11, 1);
-
-        /// <inheritdoc/>
         public static UIURescueSquad Instance;
 
         private Harmony hInstance;
@@ -72,5 +57,20 @@
 
             base.OnDisabled();
         }
+
+        /// <inheritdoc/>
+        public override string Name { get; } = "UIURescueSquad";
+
+        /// <inheritdoc/>
+        public override string Author { get; } = "JesusQC, maintained by Michal78900";
+
+        /// <inheritdoc/>
+        public override string Prefix { get; } = "UIURescueSquad";
+
+        /// <inheritdoc/>
+        public override Version Version { get; } = new Version(3, 0, 0);
+
+        /// <inheritdoc/>
+        public override Version RequiredExiledVersion => new Version(3, 0, 0);
     }
 }
