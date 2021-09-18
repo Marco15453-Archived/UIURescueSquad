@@ -95,7 +95,7 @@ Config for overrding existing unit names.
 ```
 
 ## SupplyDrop
-```
+```yml
   # Option for UIU supply drop:
   supply_drop:
   # Should a drop spawn with UIUs
