@@ -15,58 +15,96 @@ Place the `UIURescueSquad.dll` file in your EXILED/Plugins folder.
 * Commands to spawn individual members and a squad manually
 * Announcements for a squad of UIU spawning, as well as two for ntf spawning to let the players know which one spawned
 * Custom API for other plugins to interact with
-* Compatible with [RespawnTimer](https://github.com/Michal78900/RespawnTimer)
+* Compatible with [RespawnTimer](https://github.com/Michal78900/RespawnTimer) and [CustomItems](https://github.com/Exiled-Team/CustomItems)
 
 # Configs
-| Config        | Value Type | Default Value | Description |
-| :-------------: | :---------: | :------: | :--------- |
-| `is_enabled` | bool | true | Is the plugin enabled.
-| `debug` | bool | false | Should debug messages be shown in a server console.
+```yml
+# Is the plugin enabled.
+  is_enabled: true
+  # Should debug messages be shown in a server console.
+  debug: false
+  ```
 
 ## SpawnManager
 Configs for UIU spawning options.
-| Config        | Value Type | Default Value | Description |
-| :-------------: | :---------: | :------: | :--------- |
-| `respawns` | int | 1 | How many mtfs respawns must have happened to spawn UIU |
-| `probability` | int | 50 | Probability of a UIU Squad replacing a MTF spawn |
-| `max_squad` | uint | 8 | The maximum size of a UIU squad |
-| `spawn_pos` | Vector | x: 170, y: 985, z: 29 | UIU Rescue squad spawn position |
-| `announcement_text` | string | '' | Entrance broadcast announcement message |
-| `announcement_time` | ushort | 10 | Entrance broadcast announcement message duration time |
-| `uiu_announcement_cassie` | string | The U I U Squad HasEntered AwaitingRecontainment {scpnum} | UIU entrance Cassie Message |
-| `uiu_announcment_cassie_no_scp` | string | The U I U Squad HasEntered NoSCPsLeft | UIU entrance Cassie Message |
-| `ntf_announcement_cassie` | string | '' | NTF entrance Cassie Message (leave empty to use default NTF cassie entrance) |
-| `ntf_announcement_cassie` | string | '' | NTF entrance Cassie Message (leave empty to use default NTF cassie entrance) |
-| `glitch_chance` | float | 0.05 | Custom Cassie glitch chance |
-| `jam_chance` | float | 0.05 | Custom Cassie glitch chance |
-| `use_hints` | bool | false | Use hints instead of broadcasts |
-| `uiu_broadcast` | string | \<i>You are an\</i>\<color=yellow>\<b> UIU trooper\</b>\</color>, \<i>help \</i>\<color=#0377fc>\<b>MTFs\</b>\</color>\<i> to finish its job\</i> | UIU Player broadcast (null to disable it) |
-| `uiu_broadcast_time` | ushort | 10 | UIU Player broadcast time |
+```yml
+spawn_manager:
+  # How many mtfs respawns must have happened to spawn UIU
+    respawns: 1
+    # Probability of a UIU Squad replacing a MTF spawn
+    probability: 50
+    # The maximum size of a UIU squad
+    max_squad: 8
+    # UIU Rescue squad spawn position:
+    spawn_pos:
+      x: 170
+      y: 985
+      z: 29
+    # Entrance broadcast announcement message (null to disable it)
+    announcement_text: ''
+    # Entrance broadcast announcement message time
+    announcement_time: 10
+    # UIU entrance Cassie Message
+    uiu_announcement_cassie: The U I U Squad designated {designation} HasEntered AwaitingRecontainment {scpnum}
+    uiu_announcment_cassie_no_scp: The U I U Squad designated {designation} HasEntered NoSCPsLeft
+    # NTF entrance Cassie Message (leave empty to use default NTF cassie entrance)
+    ntf_announcement_cassie: ''
+    ntf_announcment_cassie_no_scp: ''
+    # Custom Cassie glitch chance.
+    glitch_chance: 0.0500000007
+    # Custom Cassie jam chance.
+    jam_chance: 0.0500000007
+    # Use hints instead of broadcasts.
+    use_hints: false
+    # UIU Player broadcast (null to disable it)
+    uiu_broadcast: <i>You are an</i><color=yellow><b> UIU trooper</b></color>, <i>help </i><color=#0377fc><b>MTFs</b></color><i> to finish its job</i>
+    # UIU Player broadcast time
+    uiu_broadcast_time: 10
+```
 
 ## ClassConfig
 There are 3 class configs foreach UIU role and they are identical.
-| Config        | Value Type | Default Value | Description |
-| :-------------: | :---------: | :------: | :--------- |
-| `health` | float | - | UIU Health |
-| `inventory` | List\<string> | - | UIU Invenotory (supports [CustomItems](https://github.com/Exiled-Team/CustomItems)) |
-| `ammo` | Dictionary\<AmmoType, uint> | - | UIU Ammo |
-| `rank` | string | - | UIU Rank seen in-game by other players |
+```yml
+    health:
+    inventory:
+    - KeycardNTFLieutenant
+    - GunCrossvec
+    - GunCOM18
+    - Medkit
+    - Adrenaline
+    - Radio
+    - GrenadeFrag
+    - ArmorCombat
+    ammo:
+      Nato556: 80
+      Nato762: 0
+      Nato9: 100
+    rank: UIU Leader
+```
 
 ## TeamColors
 Config for overrding existing unit names.
-| Config        | Value Type | Default Value | Description |
-| :-------------: | :---------: | :------: | :--------- |
-| `guard_unit_color` | string | #797D7F (grey) | Custom guard color |
-| `ntf_unit_color` | string | #0887E5 (blue) | Custom NTF color |
-| `uiu_unit_color` | string | yellow | Custom UIU color |
+```yml
+  team_colors:
+  # Custom guard color (leave empty for default color)
+    guard_unit_color: '#797D7F'
+    # Custom NTF color (leave empty for default color)
+    ntf_unit_color: '#0887E5'
+    # Custom UIU color (leave empty for default color)
+    uiu_unit_color: yellow
+```
 
 ## SupplyDrop
-Config for supply drop, when the UIU has respawned. This is disabled by default.
-| Config        | Value Type | Default Value | Description |
-| :-------------: | :---------: | :------: | :--------- |
-| `drop_enabled` | bool | false | Toggles UIU's supply drop |
-| `drop_items` | Dictionary<string, uint> | Medkit: 1, Ammo556: 2, Disarmer: 1 | Items that will be in UIU's supply drop. (supports [CustomItems](https://github.com/Exiled-Team/CustomItems)) |
-
+```
+  # Option for UIU supply drop:
+  supply_drop:
+  # Should a drop spawn with UIUs
+    drop_enabled: false
+    # List of items that appears in a drop (supports CustomItems)
+    drop_items:
+      Medkit: 1
+      Ammo556: 2
+```
 # Commands
 All UIU Rescue Squad commands begins with `uiu` prefix.
 | Command | Prefix | Required permission | Description | Example |
