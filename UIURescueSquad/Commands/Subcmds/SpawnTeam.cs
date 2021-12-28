@@ -1,7 +1,6 @@
 ﻿using CommandSystem;
 using Exiled.API.Features;
 using Exiled.Permissions.Extensions;
-using Respawning;
 using System;
 using System.Linq;
 
@@ -15,17 +14,17 @@ namespace UIURescueSquad.Commands.Subcmds
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            if(!sender.CheckPermission("uiu.spawnteam"))
+            if (!sender.CheckPermission("uiu.spawnteam"))
             {
                 response = "You don't have permission to execute this command. Required permission: uiu.spawnteam";
                 return false;
             }
 
             int validPlayers = Player.List.Where(x => x.Team == Team.RIP && !x.IsOverwatchEnabled).Count();
-            if(arguments.Count == 0)
+            if (arguments.Count == 0)
             {
                 uint maxSquad = UIURescueSquad.Singleton.Config.SpawnManager.MaxSquad;
-                if(validPlayers >= maxSquad)
+                if (validPlayers >= maxSquad)
                 {
                     API.SpawnSquad();
                     response = $"UIU Rescue Squad with {maxSquad} has been spawned.";
@@ -35,13 +34,13 @@ namespace UIURescueSquad.Commands.Subcmds
                 return false;
             }
 
-            if(!uint.TryParse(arguments.At(0), out uint num) || num == 0)
+            if (!uint.TryParse(arguments.At(0), out uint num) || num == 0)
             {
                 response = $"'{num}' is not a valid number.";
                 return false;
             }
 
-            if(validPlayers >= num)
+            if (validPlayers >= num)
             {
                 API.SpawnSquad();
                 response = $"UIU Rescue Squad with {num} players has been spawned.";
