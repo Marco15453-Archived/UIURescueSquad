@@ -33,7 +33,7 @@
             else
             {
                 uint validPlayers = 0;
-                foreach (Player player in Player.List.Where(x => x.Team == Team.RIP && !x.IsOverwatchEnabled))
+                foreach (Player player in Player.List.Where(x => x.Role.Team == Team.RIP && !x.IsOverwatchEnabled))
                 {
                     validPlayers++;
                 }

@@ -62,15 +62,15 @@
         public override string Name { get; } = "UIURescueSquad";
 
         /// <inheritdoc/>
-        public override string Author { get; } = "JesusQC, maintained by Michal78900";
+        public override string Author { get; } = "JesusQC, Michal78900, maintained by Marco15453";
 
         /// <inheritdoc/>
         public override string Prefix { get; } = "UIURescueSquad";
 
         /// <inheritdoc/>
-        public override Version Version { get; } = new Version(3, 0, 0);
+        public override Version Version { get; } = new Version(3, 1, 0);
 
         /// <inheritdoc/>
-        public override Version RequiredExiledVersion => new Version(3, 0, 0);
+        public override Version RequiredExiledVersion => new Version(5, 0, 0);
     }
 }

@@ -52,8 +52,8 @@
                 {
                     case UiuType.Soldier:
                         {
-                            if (player.Role != RoleType.NtfPrivate)
-                                player.Role = RoleType.NtfPrivate;
+                            if (player.Role.Type != RoleType.NtfPrivate)
+                                player.Role.Type = RoleType.NtfPrivate;
 
                             player.Health = Config.UiuSoldier.Health;
 
@@ -70,8 +70,8 @@
 
                     case UiuType.Agent:
                         {
-                            if (player.Role != RoleType.NtfSergeant)
-                                player.Role = RoleType.NtfSergeant;
+                            if (player.Role.Type != RoleType.NtfSergeant)
+                                player.Role.Type = RoleType.NtfSergeant;
 
                             player.Health = Config.UiuAgent.Health;
 
@@ -88,8 +88,8 @@
 
                     case UiuType.Leader:
                         {
-                            if (player.Role != RoleType.NtfCaptain)
-                                player.Role = RoleType.NtfCaptain;
+                            if (player.Role.Type != RoleType.NtfCaptain)
+                                player.Role.Type = RoleType.NtfCaptain;
 
                             player.Health = Config.UiuLeader.Health;
 

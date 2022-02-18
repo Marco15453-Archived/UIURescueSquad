@@ -10,6 +10,7 @@
     using Exiled.API.Features.Items;
     using Exiled.CustomItems.API.Features;
     using Exiled.Events.EventArgs;
+    using InventorySystem.Items;
     using MEC;
     using Respawning;
     using UnityEngine;
@@ -100,7 +101,7 @@
 
                                 if (Enum.TryParse(item.Key, out ItemType parsedItem))
                                 {
-                                    Item item1 = new Item(parsedItem);
+                                    Item item1 = Item.Create(parsedItem);
                                     item1.Spawn(spawnPos, Random.rotation);
                                 }
                                 else
