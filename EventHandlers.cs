@@ -10,6 +10,7 @@
     using Exiled.API.Features.Items;
     using Exiled.CustomItems.API.Features;
     using Exiled.Events.EventArgs;
+    using InventorySystem.Items;
     using MEC;
     using Respawning;
     using UnityEngine;
@@ -56,7 +57,9 @@
         internal static void OnRoundStart()
         {
             if (!string.IsNullOrEmpty(Config.TeamColors.GuardUnitColor))
+            {
                 Map.ChangeUnitColor(0, Config.TeamColors.GuardUnitColor);
+            }
         }
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnRespawningTeam(RespawningTeamEventArgs)"/>
@@ -71,7 +74,9 @@
                     bool prioritySpawn = RespawnManager.Singleton._prioritySpawn;
 
                     if (prioritySpawn)
+                    {
                         ev.Players.OrderBy((x) => x.ReferenceHub.characterClassManager.DeathTime);
+                    }
 
                     for (int i = ev.Players.Count; i > MaxPlayers; i--)
                     {
@@ -79,8 +84,8 @@
                         ev.Players.Remove(player);
                     }
 
-                    Timing.CallDelayed(0f, () =>
-                    {
+                    Timing.CallDelayed(0.5f, () =>
+                        {
                         foreach (Player player in ev.Players)
                         {
                             SpawnPlayer(player);
@@ -89,7 +94,7 @@
                         if (Config.SpawnManager.AnnouncementText != null)
                         {
                             Map.ClearBroadcasts();
-                            Map.Broadcast(Config.SpawnManager.AnnouncementTime, Config.SpawnManager.AnnouncementText);
+                            Timing.CallDelayed(0.5f, () => Map.Broadcast(Config.SpawnManager.AnnouncementTime, Config.SpawnManager.AnnouncementText));
                         }
 
                         if (Config.SupplyDrop.DropEnabled)
@@ -100,7 +105,7 @@
 
                                 if (Enum.TryParse(item.Key, out ItemType parsedItem))
                                 {
-                                    Item item1 = new Item(parsedItem);
+                                    Item item1 = Item.Create(parsedItem);
                                     item1.Spawn(spawnPos, Random.rotation);
                                 }
                                 else
@@ -170,12 +175,13 @@
             cassieMessage = cassieMessage.Replace("{scpnum}", $"{ev.ScpsLeft} scpsubject");
 
             if (ev.ScpsLeft > 1)
+            {
                 cassieMessage = cassieMessage.Replace("scpsubject", "scpsubjects");
+            }
 
             cassieMessage = cassieMessage.Replace("{designation}", $"nato_{ev.UnitName[0]} {ev.UnitNumber}");
 
-            if (!string.IsNullOrEmpty(cassieMessage))
-                Cassie.GlitchyMessage(cassieMessage, Config.SpawnManager.GlitchChance, Config.SpawnManager.JamChance);
+            Cassie.GlitchyMessage(cassieMessage, Config.SpawnManager.GlitchChance, Config.SpawnManager.JamChance);
         }
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnDestroying(DestroyingEventArgs)"/>
