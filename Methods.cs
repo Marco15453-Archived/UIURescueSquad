@@ -53,7 +53,9 @@
                     case UiuType.Soldier:
                         {
                             if (player.Role.Type != RoleType.NtfPrivate)
+                            {
                                 player.Role.Type = RoleType.NtfPrivate;
+                            }
 
                             player.Health = Config.UiuSoldier.Health;
 
@@ -61,7 +63,7 @@
 
                             foreach (var ammo in Config.UiuSoldier.Ammo)
                             {
-                                player.Ammo[ammo.Key.GetItemType()] = ammo.Value;
+                                player.SetAmmo(ammo.Key, ammo.Value);
                             }
 
                             player.CustomInfo = $"{player.Nickname}\n{Config.UiuSoldier.Rank}";
@@ -71,7 +73,9 @@
                     case UiuType.Agent:
                         {
                             if (player.Role.Type != RoleType.NtfSergeant)
+                            {
                                 player.Role.Type = RoleType.NtfSergeant;
+                            }
 
                             player.Health = Config.UiuAgent.Health;
 
@@ -79,7 +83,7 @@
 
                             foreach (var ammo in Config.UiuAgent.Ammo)
                             {
-                                player.Ammo[ammo.Key.GetItemType()] = ammo.Value;
+                                player.SetAmmo(ammo.Key, ammo.Value);
                             }
 
                             player.CustomInfo = $"{player.Nickname}\n{Config.UiuAgent.Rank}";
@@ -89,7 +93,9 @@
                     case UiuType.Leader:
                         {
                             if (player.Role.Type != RoleType.NtfCaptain)
+                            {
                                 player.Role.Type = RoleType.NtfCaptain;
+                            }
 
                             player.Health = Config.UiuLeader.Health;
 
@@ -97,7 +103,7 @@
 
                             foreach (var ammo in Config.UiuLeader.Ammo)
                             {
-                                player.Ammo[ammo.Key.GetItemType()] = ammo.Value;
+                                player.SetAmmo(ammo.Key, ammo.Value);
                             }
 
                             player.CustomInfo = $"{player.Nickname}\n{Config.UiuLeader.Rank}";
