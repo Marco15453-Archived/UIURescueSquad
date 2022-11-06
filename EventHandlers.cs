@@ -84,7 +84,7 @@
                         ev.Players.Remove(player);
                     }
 
-                    Timing.CallDelayed(0.5f, () =>
+                    Timing.CallDelayed(1.0f, () =>
                         {
                         foreach (Player player in ev.Players)
                         {
@@ -181,7 +181,8 @@
 
             cassieMessage = cassieMessage.Replace("{designation}", $"nato_{ev.UnitName[0]} {ev.UnitNumber}");
 
-            Cassie.GlitchyMessage(cassieMessage, Config.SpawnManager.GlitchChance, Config.SpawnManager.JamChance);
+            if (!string.IsNullOrEmpty(cassieMessage))
+                Cassie.GlitchyMessage(cassieMessage, Config.SpawnManager.GlitchChance, Config.SpawnManager.JamChance);
         }
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnDestroying(DestroyingEventArgs)"/>
