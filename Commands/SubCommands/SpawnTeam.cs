@@ -5,6 +5,7 @@
     using CommandSystem;
     using Exiled.API.Features;
     using Exiled.Permissions.Extensions;
+    using PlayerRoles;
     using Respawning;
     using static API;
 
@@ -33,10 +34,8 @@
             else
             {
                 uint validPlayers = 0;
-                foreach (Player player in Player.List.Where(x => x.Role.Team == Team.RIP && !x.IsOverwatchEnabled))
-                {
+                foreach (Player player in Player.List.Where(x => x.Role.Team == Team.Dead && !x.IsOverwatchEnabled))
                     validPlayers++;
-                }
 
                 if (arguments.Count == 0)
                 {

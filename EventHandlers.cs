@@ -8,10 +8,14 @@
     using Exiled.API.Extensions;
     using Exiled.API.Features;
     using Exiled.API.Features.Items;
+    using Exiled.API.Features.Pickups;
+    using Exiled.API.Features.Roles;
     using Exiled.CustomItems.API.Features;
-    using Exiled.Events.EventArgs;
-    using InventorySystem.Items;
+    using Exiled.Events.EventArgs.Map;
+    using Exiled.Events.EventArgs.Player;
+    using Exiled.Events.EventArgs.Server;
     using MEC;
+    using PlayerRoles;
     using Respawning;
     using UnityEngine;
     using static API;
@@ -43,7 +47,7 @@
             IsSpawnable = Random.Range(1, 101) <= Config.SpawnManager.Probability &&
                 respawns >= Config.SpawnManager.Respawns;
 
-            Log.Debug($"Is UIU spawnable: {IsSpawnable}", Config.Debug);
+            Log.Debug($"Is UIU spawnable: {IsSpawnable}");
         }
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnWaitingForPlayers"/>
@@ -53,15 +57,6 @@
             MaxPlayers = Config.SpawnManager.MaxSquad;
         }
 
-        /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnRoundStarted"/>
-        internal static void OnRoundStart()
-        {
-            if (!string.IsNullOrEmpty(Config.TeamColors.GuardUnitColor))
-            {
-                Map.ChangeUnitColor(0, Config.TeamColors.GuardUnitColor);
-            }
-        }
-
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnRespawningTeam(RespawningTeamEventArgs)"/>
         internal static void OnTeamRespawn(RespawningTeamEventArgs ev)
         {
@@ -69,13 +64,15 @@
             {
                 respawns++;
 
+                CalculateChance();
+
                 if (IsSpawnable)
                 {
                     bool prioritySpawn = RespawnManager.Singleton._prioritySpawn;
 
                     if (prioritySpawn)
                     {
-                        ev.Players.OrderBy((x) => x.ReferenceHub.characterClassManager.DeathTime);
+                        ev.Players.OrderBy(x => (x.Role as SpectatorRole).DeathTime);
                     }
 
                     for (int i = ev.Players.Count; i > MaxPlayers; i--)
@@ -101,12 +98,12 @@
                         {
                             foreach (var item in Config.SupplyDrop.DropItems)
                             {
-                                Vector3 spawnPos = RoleType.NtfPrivate.GetRandomSpawnProperties().Item1;
+                                Vector3 spawnPos = RoleTypeId.NtfPrivate.GetRandomSpawnLocation().Position;
 
                                 if (Enum.TryParse(item.Key, out ItemType parsedItem))
                                 {
                                     Item item1 = Item.Create(parsedItem);
-                                    item1.Spawn(spawnPos, Random.rotation);
+                                    item1.CreatePickup(spawnPos, Random.rotation);
                                 }
                                 else
                                 {
@@ -116,22 +113,7 @@
                         }
                     });
 
-                    if (!string.IsNullOrEmpty(Config.TeamColors.UiuUnitColor))
-                    {
-                        Timing.CallDelayed(Timing.WaitUntilTrue(() => RespawnManager.Singleton.NamingManager.AllUnitNames.Count >= respawns), () =>
-                        {
-                            Map.ChangeUnitColor(respawns, Config.TeamColors.UiuUnitColor);
-                        });
-                    }
-
                     Timing.CallDelayed(1f, () => IsSpawnable = false);
-                }
-                else if (!string.IsNullOrEmpty(Config.TeamColors.NtfUnitColor))
-                {
-                    Timing.CallDelayed(Timing.WaitUntilTrue(() => RespawnManager.Singleton.NamingManager.AllUnitNames.Count >= respawns), () =>
-                    {
-                        Map.ChangeUnitColor(respawns, Config.TeamColors.NtfUnitColor);
-                    });
                 }
             }
         }
@@ -189,27 +171,22 @@
         internal static void OnDestroy(DestroyingEventArgs ev)
         {
             if (IsUiu(ev.Player))
-            {
                 DestroyUIU(ev.Player);
-            }
         }
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnDied(DiedEventArgs)"/>
         internal static void OnDied(DiedEventArgs ev)
         {
-            if (IsUiu(ev.Target))
-            {
-                DestroyUIU(ev.Target);
-            }
+            if (IsUiu(ev.Player))
+                DestroyUIU(ev.Player);
         }
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnChangingRole(ChangingRoleEventArgs)"/>
         internal static void OnChanging(ChangingRoleEventArgs ev)
         {
-            if (IsUiu(ev.Player) && ev.NewRole.GetTeam() != Team.MTF)
-            {
+            Team team = Exiled.API.Extensions.RoleExtensions.GetTeam(ev.NewRole);
+            if (IsUiu(ev.Player) && team != Team.FoundationForces)
                 DestroyUIU(ev.Player);
-            }
         }
 
         private static readonly Config Config = UIURescueSquad.Instance.Config;

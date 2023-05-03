@@ -1,9 +1,9 @@
 ﻿namespace UIURescueSquad
 {
-    using Exiled.API.Extensions;
     using Exiled.API.Features;
     using Exiled.CustomItems.API;
     using MEC;
+    using PlayerRoles;
     using static API;
 
     /// <summary>
@@ -44,7 +44,7 @@
                 }
             }
 
-            Timing.CallDelayed(0.01f, () =>
+            Timing.CallDelayed(0.05f, () =>
             {
                 player.IsGodModeEnabled = true;
 
@@ -52,19 +52,15 @@
                 {
                     case UiuType.Soldier:
                         {
-                            if (player.Role.Type != RoleType.NtfPrivate)
-                            {
-                                player.Role.Type = RoleType.NtfPrivate;
-                            }
+                            if (player.Role.Type != RoleTypeId.NtfPrivate)
+                                player.Role.Set(RoleTypeId.NtfPrivate);
 
                             player.Health = Config.UiuSoldier.Health;
 
                             player.ResetInventory(Config.UiuSoldier.Inventory);
 
                             foreach (var ammo in Config.UiuSoldier.Ammo)
-                            {
                                 player.SetAmmo(ammo.Key, ammo.Value);
-                            }
 
                             player.CustomInfo = $"{player.Nickname}\n{Config.UiuSoldier.Rank}";
                             break;
@@ -72,19 +68,15 @@
 
                     case UiuType.Agent:
                         {
-                            if (player.Role.Type != RoleType.NtfSergeant)
-                            {
-                                player.Role.Type = RoleType.NtfSergeant;
-                            }
+                            if (player.Role.Type != RoleTypeId.NtfSergeant)
+                                player.Role.Set(RoleTypeId.NtfSergeant);
 
                             player.Health = Config.UiuAgent.Health;
 
                             player.ResetInventory(Config.UiuAgent.Inventory);
 
                             foreach (var ammo in Config.UiuAgent.Ammo)
-                            {
                                 player.SetAmmo(ammo.Key, ammo.Value);
-                            }
 
                             player.CustomInfo = $"{player.Nickname}\n{Config.UiuAgent.Rank}";
                             break;
@@ -92,19 +84,15 @@
 
                     case UiuType.Leader:
                         {
-                            if (player.Role.Type != RoleType.NtfCaptain)
-                            {
-                                player.Role.Type = RoleType.NtfCaptain;
-                            }
+                            if (player.Role.Type != RoleTypeId.NtfCaptain)
+                                player.Role.Set(RoleTypeId.NtfCaptain);
 
                             player.Health = Config.UiuLeader.Health;
 
                             player.ResetInventory(Config.UiuLeader.Inventory);
 
                             foreach (var ammo in Config.UiuLeader.Ammo)
-                            {
                                 player.SetAmmo(ammo.Key, ammo.Value);
-                            }
 
                             player.CustomInfo = $"{player.Nickname}\n{Config.UiuLeader.Rank}";
                             break;

@@ -42,12 +42,6 @@
         public UiuSoldier UiuSoldier { get; private set; } = new UiuSoldier();
 
         /// <summary>
-        /// Gets a <see cref="TeamColors"/> configs.
-        /// </summary>
-        [Description("Options for custom team colors:")]
-        public TeamColors TeamColors { get; private set; } = new TeamColors();
-
-        /// <summary>
         /// Gets a <see cref="SupplyDrop"/> configs.
         /// </summary>
         [Description("Option for UIU supply drop:")]

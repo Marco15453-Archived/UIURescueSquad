@@ -82,18 +82,6 @@ There are 3 class configs foreach UIU role and they are identical.
     rank: UIU Leader
 ```
 
-## TeamColors
-Config for overrding existing unit names.
-```yml
-  team_colors:
-  # Custom guard color (leave empty for default color)
-    guard_unit_color: '#797D7F'
-    # Custom NTF color (leave empty for default color)
-    ntf_unit_color: '#0887E5'
-    # Custom UIU color (leave empty for default color)
-    uiu_unit_color: yellow
-```
-
 ## SupplyDrop
 ```yml
   # Option for UIU supply drop:
