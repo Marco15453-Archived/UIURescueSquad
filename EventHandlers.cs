@@ -85,7 +85,7 @@
                         foreach (Player player in ev.Players)
                             SpawnPlayer(player);
 
-                        if (Config.SpawnManager.AnnouncementText != null)
+                        if(!string.IsNullOrEmpty(Config.SpawnManager.AnnouncementText))
                         {
                             Map.ClearBroadcasts();
                             Timing.CallDelayed(0.5f, () => Map.Broadcast(Config.SpawnManager.AnnouncementTime, Config.SpawnManager.AnnouncementText));
@@ -123,16 +123,28 @@
             if (!IsSpawnable)
             {
                 if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(Config.SpawnManager.NtfAnnouncmentCassieNoScp))
+                {
                     cassieMessage = Config.SpawnManager.NtfAnnouncmentCassieNoScp;
+                    ev.IsAllowed = false;
+                }
                 else if (!string.IsNullOrEmpty(Config.SpawnManager.NtfAnnouncementCassie))
+                {
                     cassieMessage = Config.SpawnManager.NtfAnnouncementCassie;
+                    ev.IsAllowed = false;
+                }
+                    
             }
             else
             {
-                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncmentCassieNoScp))
+                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncmentCassieNoScp)) {
                     cassieMessage = Config.SpawnManager.UiuAnnouncmentCassieNoScp;
+                    ev.IsAllowed = false;
+                }
                 else if (!string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncementCassie))
+                {
                     cassieMessage = Config.SpawnManager.UiuAnnouncementCassie;
+                    ev.IsAllowed = false;
+                }
             }
 
             cassieMessage = cassieMessage.Replace("{scpnum}", $"{ev.ScpsLeft} scpsubject");
@@ -144,8 +156,6 @@
 
             if (!string.IsNullOrEmpty(cassieMessage))
                 Cassie.GlitchyMessage(cassieMessage, Config.SpawnManager.GlitchChance, Config.SpawnManager.JamChance);
-
-            ev.IsAllowed = false;
         }
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnDestroying(DestroyingEventArgs)"/>

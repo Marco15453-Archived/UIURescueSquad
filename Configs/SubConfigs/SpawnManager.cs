@@ -71,12 +71,12 @@
         /// Gets the custom NTF Cassie entrance message.
         /// </summary>
         [Description("NTF entrance Cassie Message (leave empty to use default NTF cassie entrance)")]
-        public string NtfAnnouncementCassie { get; private set; } = string.Empty;
+        public string NtfAnnouncementCassie { get; private set; } = "MTFUnit epsilon 11 designated {designation} hasentered AllRemaining AwaitingRecontainment {scpnum}";
 
         /// <summary>
         /// Gets the custom NTF Cassie entrance message, when there aren't any SCPs.
         /// </summary>
-        public string NtfAnnouncmentCassieNoScp { get; private set; } = string.Empty;
+        public string NtfAnnouncmentCassieNoScp { get; private set; } = "MTFUnit epsilon 11 designated {designation} hasentered AllRemaining NoSCPsLeft";
 
         /// <summary>
         /// Gets the Cassie glitch chance for custom announcements.
