@@ -15,6 +15,12 @@
         public int Respawns { get; private set; } = 1;
 
         /// <summary>
+        /// Gets the number of maximum number of times UIU Rescue Squad can spawn per game.
+        /// </summary>
+        [Description("The maximum number of times UIU Rescue Squad can spawn per game.")]
+        public int MaxSpawns { get; set; } = 3;
+
+        /// <summary>
         /// Gets the chance for UIU to spawn instead of NTF.
         /// </summary>
         [Description("Probability of a UIU Squad replacing a MTF spawn")]
@@ -27,10 +33,16 @@
         public uint MaxSquad { get; private set; } = 8;
 
         /// <summary>
+        /// Gets or sets if UIU should use MTF Spawn Positions.
+        /// </summary>
+        [Description("Should UIU roles use the MTF Spawn Positions instead of the fixed Spawn Position below?")]
+        public bool UseMTFSpawnPosition { get; private set; } = true;
+
+        /// <summary>
         /// Gets the UIU spawn position.
         /// </summary>
-        [Description("UIU Rescue squad spawn position:")]
-        public Vector3 SpawnPos { get; private set; } = new Vector3(170f, 985f, 29f);
+        [Description("UIU Rescue squad spawn position")]
+        public Vector3 SpawnPos { get; private set; } = new Vector3(134f, 995f, -45f);
 
         /// <summary>
         /// Gets the UIU announcement message.

@@ -59,7 +59,7 @@
         public override string Prefix { get; } = "UIURescueSquad";
 
         /// <inheritdoc/>
-        public override Version Version { get; } = new Version(4, 0, 0);
+        public override Version Version { get; } = new Version(4, 0, 1);
 
         /// <inheritdoc/>
         public override Version RequiredExiledVersion => new Version(6, 1, 0);

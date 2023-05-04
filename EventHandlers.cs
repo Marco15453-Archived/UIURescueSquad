@@ -38,6 +38,7 @@
         public static uint MaxPlayers;
 
         private static int respawns = 0;
+        private static int uiurespawns = 0;
 
         /// <summary>
         /// Handles UIU spawn chance with all other conditions.
@@ -45,7 +46,8 @@
         internal static void CalculateChance()
         {
             IsSpawnable = Random.Range(1, 101) <= Config.SpawnManager.Probability &&
-                respawns >= Config.SpawnManager.Respawns;
+                respawns >= Config.SpawnManager.Respawns &&
+                uiurespawns < Config.SpawnManager.MaxSpawns;
 
             Log.Debug($"Is UIU spawnable: {IsSpawnable}");
         }
@@ -71,9 +73,7 @@
                     bool prioritySpawn = RespawnManager.Singleton._prioritySpawn;
 
                     if (prioritySpawn)
-                    {
                         ev.Players.OrderBy(x => (x.Role as SpectatorRole).DeathTime);
-                    }
 
                     for (int i = ev.Players.Count; i > MaxPlayers; i--)
                     {
@@ -81,12 +81,9 @@
                         ev.Players.Remove(player);
                     }
 
-                    Timing.CallDelayed(1.0f, () =>
-                        {
+                    Timing.CallDelayed(1.0f, () => {
                         foreach (Player player in ev.Players)
-                        {
                             SpawnPlayer(player);
-                        }
 
                         if (Config.SpawnManager.AnnouncementText != null)
                         {
@@ -112,8 +109,8 @@
                             }
                         }
                     });
-
-                    Timing.CallDelayed(1f, () => IsSpawnable = false);
+                    uiurespawns++;
+                    Timing.CallDelayed(2.5f, () => IsSpawnable = false);
                 }
             }
         }
@@ -126,45 +123,29 @@
             if (!IsSpawnable)
             {
                 if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(Config.SpawnManager.NtfAnnouncmentCassieNoScp))
-                {
-                    ev.IsAllowed = false;
-
                     cassieMessage = Config.SpawnManager.NtfAnnouncmentCassieNoScp;
-                }
                 else if (!string.IsNullOrEmpty(Config.SpawnManager.NtfAnnouncementCassie))
-                {
-                    ev.IsAllowed = false;
-
                     cassieMessage = Config.SpawnManager.NtfAnnouncementCassie;
-                }
             }
             else
             {
                 if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncmentCassieNoScp))
-                {
-                    ev.IsAllowed = false;
-
                     cassieMessage = Config.SpawnManager.UiuAnnouncmentCassieNoScp;
-                }
-                else if (ev.ScpsLeft > 1 && !string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncementCassie))
-                {
-                    ev.IsAllowed = false;
-
+                else if (!string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncementCassie))
                     cassieMessage = Config.SpawnManager.UiuAnnouncementCassie;
-                }
             }
 
             cassieMessage = cassieMessage.Replace("{scpnum}", $"{ev.ScpsLeft} scpsubject");
 
-            if (ev.ScpsLeft > 1)
-            {
+            if (ev.ScpsLeft >= 1)
                 cassieMessage = cassieMessage.Replace("scpsubject", "scpsubjects");
-            }
 
             cassieMessage = cassieMessage.Replace("{designation}", $"nato_{ev.UnitName[0]} {ev.UnitNumber}");
 
             if (!string.IsNullOrEmpty(cassieMessage))
                 Cassie.GlitchyMessage(cassieMessage, Config.SpawnManager.GlitchChance, Config.SpawnManager.JamChance);
+
+            ev.IsAllowed = false;
         }
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnDestroying(DestroyingEventArgs)"/>

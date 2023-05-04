@@ -109,7 +109,11 @@
 
                 Timing.CallDelayed(0.4f, () =>
                 {
-                    player.Position = Config.SpawnManager.SpawnPos;
+                    if (Config.SpawnManager.UseMTFSpawnPosition)
+                        player.Position = player.Role.RandomSpawnLocation.Position;
+                    else
+                        player.Position = Config.SpawnManager.SpawnPos;
+
                     player.IsGodModeEnabled = false;
                 });
             });
