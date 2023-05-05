@@ -26,9 +26,9 @@
         /// <inheritdoc/>
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            if (!sender.CheckPermission("sh.spawnteam"))
+            if (!sender.CheckPermission("uiu.spawnteam"))
             {
-                response = "You don't have permission to execute this command. Required permission: sh.spawnteam";
+                response = "You don't have permission to execute this command. Required permission: uiu.spawnteam";
                 return false;
             }
             else
@@ -45,7 +45,6 @@
                     {
                         EventHandlers.IsSpawnable = true;
                         Respawn.ForceWave(SpawnableTeamType.NineTailedFox);
-                        EventHandlers.IsSpawnable = false;
 
                         response = $"UIU Rescue Squad team has been successfully spawned with {maxSquad} players!";
                         return true;
@@ -73,7 +72,6 @@
 
                         Respawn.ForceWave(SpawnableTeamType.NineTailedFox);
 
-                        EventHandlers.IsSpawnable = false;
                         EventHandlers.MaxPlayers = prevValue;
 
                         response = $"UIU Rescue Squad team with {num} players has been spawned.";

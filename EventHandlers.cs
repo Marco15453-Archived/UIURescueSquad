@@ -136,7 +136,8 @@
             }
             else
             {
-                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncmentCassieNoScp)) {
+                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncmentCassieNoScp)) 
+                {
                     cassieMessage = Config.SpawnManager.UiuAnnouncmentCassieNoScp;
                     ev.IsAllowed = false;
                 }
