@@ -1,7 +1,5 @@
 ﻿namespace UIURescueSquad
 {
-#pragma warning disable SA1202
-
     using System;
     using System.Linq;
     using Configs;
@@ -64,8 +62,6 @@
         {
             if (ev.NextKnownTeam == SpawnableTeamType.NineTailedFox)
             {
-                respawns++;
-
                 CalculateChance();
 
                 if (IsSpawnable)
@@ -112,6 +108,7 @@
                     uiurespawns++;
                     Timing.CallDelayed(2.5f, () => IsSpawnable = false);
                 }
+                respawns++;
             }
         }
 
@@ -150,7 +147,7 @@
 
             cassieMessage = cassieMessage.Replace("{scpnum}", $"{ev.ScpsLeft} scpsubject");
 
-            if (ev.ScpsLeft >= 1)
+            if (ev.ScpsLeft > 1)
                 cassieMessage = cassieMessage.Replace("scpsubject", "scpsubjects");
 
             cassieMessage = cassieMessage.Replace("{designation}", $"nato_{ev.UnitName[0]} {ev.UnitNumber}");
@@ -176,7 +173,7 @@
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnChangingRole(ChangingRoleEventArgs)"/>
         internal static void OnChanging(ChangingRoleEventArgs ev)
         {
-            Team team = Exiled.API.Extensions.RoleExtensions.GetTeam(ev.NewRole);
+            Team team = PlayerRolesUtils.GetTeam(ev.NewRole);
             if (IsUiu(ev.Player) && team != Team.FoundationForces)
                 DestroyUIU(ev.Player);
         }
