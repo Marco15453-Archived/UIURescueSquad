@@ -44,7 +44,7 @@
         internal static void CalculateChance()
         {
             IsSpawnable = Random.Range(1, 101) <= Config.SpawnManager.Probability &&
-                respawns >= Config.SpawnManager.Respawns &&
+                respawns > Config.SpawnManager.Respawns &&
                 uiurespawns < Config.SpawnManager.MaxSpawns;
 
             Log.Debug($"Is UIU spawnable: {IsSpawnable}");
@@ -60,6 +60,8 @@
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnRespawningTeam(RespawningTeamEventArgs)"/>
         internal static void OnTeamRespawn(RespawningTeamEventArgs ev)
         {
+            respawns++;
+
             if (ev.NextKnownTeam == SpawnableTeamType.NineTailedFox)
             {
                 CalculateChance();
@@ -108,7 +110,6 @@
                     uiurespawns++;
                     Timing.CallDelayed(2.5f, () => IsSpawnable = false);
                 }
-                respawns++;
             }
         }
 

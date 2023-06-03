@@ -11,7 +11,7 @@
         /// <summary>
         /// Gets the number of respawn waves which must occur before considering UIU to spawn.
         /// </summary>
-        [Description("How many mtfs respawns must have happened to spawn UIU")]
+        [Description("How many respawn waves must occur before considering UIU to spawn.")]
         public int Respawns { get; private set; } = 1;
 
         /// <summary>
