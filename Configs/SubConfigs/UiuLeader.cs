@@ -27,7 +27,7 @@
             "Medkit",
             "Adrenaline",
             "Radio",
-            "GrenadeFrag",
+            "GrenadeHE",
             "ArmorCombat",
         };
 
