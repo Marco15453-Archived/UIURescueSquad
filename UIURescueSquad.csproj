@@ -9,9 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UIURescueSquad</RootNamespace>
     <AssemblyName>UIURescueSquad</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <LangVersion>9</LangVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,11 +38,8 @@
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Lib.Harmony.2.2.2\lib\net472\0Harmony.dll</HintPath>
-    </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\Assembly-CSharp-Publicized.dll</HintPath>
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\Assembly-CSharp-Publicized.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -48,45 +47,45 @@
       <HintPath>G:\UnRAID Backup\Development\EXILED Plugins\References\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-Publicized, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\Assembly-CSharp-Publicized.dll</HintPath>
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\Assembly-CSharp-Publicized.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CommandSystem.Core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\CommandSystem.Core.dll</HintPath>
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\CommandSystem.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.API, Version=5.3.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\Exiled.API.dll</HintPath>
+    <Reference Include="Exiled.API, Version=7.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\Exiled.API.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Bootstrap, Version=5.3.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\Exiled.Bootstrap.dll</HintPath>
+    <Reference Include="Exiled.CreditTags, Version=7.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\Exiled.CreditTags.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.CreditTags, Version=5.3.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\Exiled.CreditTags.dll</HintPath>
+    <Reference Include="Exiled.CustomItems, Version=7.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\Exiled.CustomItems.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.CustomItems, Version=5.3.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\Exiled.CustomItems.dll</HintPath>
+    <Reference Include="Exiled.CustomRoles, Version=7.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\Exiled.CustomRoles.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.CustomRoles, Version=5.3.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\Exiled.CustomRoles.dll</HintPath>
+    <Reference Include="Exiled.Events, Version=7.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\Exiled.Events.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Events, Version=5.3.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\Exiled.Events.dll</HintPath>
+    <Reference Include="Exiled.Loader, Version=7.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\Exiled.Loader.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Loader, Version=5.3.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\Exiled.Loader.dll</HintPath>
+    <Reference Include="Exiled.Permissions, Version=7.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\Exiled.Permissions.dll</HintPath>
     </Reference>
-    <Reference Include="Exiled.Permissions, Version=5.3.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\Exiled.Permissions.dll</HintPath>
-    </Reference>
-    <Reference Include="Exiled.Updater, Version=3.1.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\Exiled.Updater.dll</HintPath>
+    <Reference Include="Exiled.Updater, Version=3.1.2.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\Exiled.Updater.dll</HintPath>
     </Reference>
     <Reference Include="Mirror, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(EXILED_REFERENCES)\Mirror.dll</HintPath>
     </Reference>
     <Reference Include="NorthwoodLib, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\EXILED.5.3.1\lib\net472\NorthwoodLib.dll</HintPath>
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\NorthwoodLib.dll</HintPath>
+    </Reference>
+    <Reference Include="PluginAPI, Version=12.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\PluginAPI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -105,32 +104,22 @@
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\..\References\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
+    <Reference Include="YamlDotNet, Version=11.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
+      <HintPath>packages\EXILED.7.0.0-rc.3-1\lib\net48\YamlDotNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="API.cs" />
-    <Compile Include="Commands\SubCommands\List.cs" />
-    <Compile Include="Commands\SubCommands\Spawn.cs" />
-    <Compile Include="Commands\SubCommands\SpawnTeam.cs" />
-    <Compile Include="Commands\UIURescueSquadParentCommand.cs" />
     <Compile Include="Configs\Config.cs" />
-    <Compile Include="Configs\SubConfigs\SpawnManager.cs" />
-    <Compile Include="Configs\SubConfigs\SupplyDrop.cs" />
-    <Compile Include="Configs\SubConfigs\TeamColors.cs" />
-    <Compile Include="Configs\SubConfigs\UiuLeader.cs" />
-    <Compile Include="Configs\SubConfigs\UiuAgent.cs" />
-    <Compile Include="Configs\SubConfigs\UiuSoldier.cs" />
+    <Compile Include="Configs\SpawnManager.cs" />
     <Compile Include="EventHandlers.cs" />
-    <Compile Include="Methods.cs" />
-    <Compile Include="Patches\UIUSpawn.cs" />
+    <Compile Include="Roles\UiuAgent.cs" />
+    <Compile Include="Roles\UiuLeader.cs" />
+    <Compile Include="Roles\UiuSoldier.cs" />
     <Compile Include="UIURescueSquad.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="packages\StyleCop.Analyzers.Unstable.1.2.0.435\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="packages\StyleCop.Analyzers.Unstable.1.2.0.435\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
