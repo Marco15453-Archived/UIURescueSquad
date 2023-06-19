@@ -6,6 +6,8 @@ A plugin that adds a new class to your server named "UIU Rescue Squad". Their jo
 
 **[EXILED](https://github.com/Exiled-Team/EXILED) must be installed for this to work.**
 
+**CustomRoles need to be enabled on your server for this to work.**
+
 Place the `UIURescueSquad.dll` file in your EXILED/Plugins folder.
 
 # Features
