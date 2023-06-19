@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Exiled.API.Features;
+    using PlayerRoles;
 
     /// <summary>
     /// The UIU Rescue Sqaud API with <see langword="static"/> methods.
@@ -24,17 +25,17 @@
         /// </summary>
         /// <param name="roleType">RoleType to check.</param>
         /// <returns>A valid <see cref="UiuType"/> or <see cref="UiuType.None"/> if the role couldn't be parsed.</returns>
-        public static UiuType GetUIURole(RoleType roleType)
+        public static UiuType GetUIURole(RoleTypeId roleType)
         {
             switch (roleType)
             {
-                case RoleType.NtfPrivate:
+                case RoleTypeId.NtfPrivate:
                     return UiuType.Soldier;
 
-                case RoleType.NtfSergeant:
+                case RoleTypeId.NtfSergeant:
                     return UiuType.Agent;
 
-                case RoleType.NtfCaptain:
+                case RoleTypeId.NtfCaptain:
                     return UiuType.Leader;
 
                 default:
