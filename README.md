@@ -4,7 +4,7 @@ A plugin that adds a new class to your server named "UIU Rescue Squad". Their jo
 
 # Installation
 
-**[EXILED](https://github.com/galaxy119/EXILED) must be installed for this to work.**
+**[EXILED](https://github.com/Exiled-Team/EXILED) must be installed for this to work.**
 
 Place the `UIURescueSquad.dll` file in your EXILED/Plugins folder.
 
@@ -14,8 +14,6 @@ Place the `UIURescueSquad.dll` file in your EXILED/Plugins folder.
 * A configurable spawn location
 * Commands to spawn individual members and a squad manually
 * Announcements for a squad of UIU spawning, as well as two for ntf spawning to let the players know which one spawned
-* Custom API for other plugins to interact with
-* Compatible with [RespawnTimer](https://github.com/Michal78900/RespawnTimer) and [CustomItems](https://github.com/Exiled-Team/CustomItems)
 
 # Configs
 ```yml
@@ -51,52 +49,7 @@ spawn_manager:
     ntf_announcement_cassie: ''
     ntf_announcment_cassie_no_scp: ''
     # Custom Cassie glitch chance.
-    glitch_chance: 0.0500000007
+    glitch_chance: 0.05
     # Custom Cassie jam chance.
-    jam_chance: 0.0500000007
-    # Use hints instead of broadcasts.
-    use_hints: false
-    # UIU Player broadcast (null to disable it)
-    uiu_broadcast: <i>You are an</i><color=yellow><b> UIU trooper</b></color>, <i>help </i><color=#0377fc><b>MTFs</b></color><i> to finish its job</i>
-    # UIU Player broadcast time
-    uiu_broadcast_time: 10
+    jam_chance: 0.05
 ```
-
-## ClassConfig
-There are 3 class configs foreach UIU role and they are identical.
-```yml
-    health:
-    inventory:
-    - KeycardNTFLieutenant
-    - GunCrossvec
-    - GunCOM18
-    - Medkit
-    - Adrenaline
-    - Radio
-    - GrenadeFrag
-    - ArmorCombat
-    ammo:
-      Nato556: 80
-      Nato762: 0
-      Nato9: 100
-    rank: UIU Leader
-```
-
-## SupplyDrop
-```yml
-  # Option for UIU supply drop:
-  supply_drop:
-  # Should a drop spawn with UIUs
-    drop_enabled: false
-    # List of items that appears in a drop (supports CustomItems)
-    drop_items:
-      Medkit: 1
-      Ammo556: 2
-```
-# Commands
-All UIU Rescue Squad commands begins with `uiu` prefix.
-| Command | Prefix | Required permission | Description | Example |
-| :-------------: | :---------: | :---------: | :---------: | :---------:
-| **list** | l | `uiu.list` | Shows the list of players that are currently UIU with their UIU role and unit name. | `uiu l`
-| **spawn** | s | `uiu.spawn` | Makes the player an UIU. (it uses IDs / nicknames as argument, if no argument is given, it will make the Command Sender a UIU Leader, the second argument is UIU role) | `uiu s  `
-| **spawnteam** | st | `uiu.spawnteam` | Spawns UIU team with given number of players (if no argument is given it will try to spawn a squad with max number provided in a config) **Keep in mind this command won't work if there is not enough Spectators** | `uiu st`
