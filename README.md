@@ -48,7 +48,7 @@ Configs for UIU spawning options.
 ```
 
 ## Classes
-```
+```yml
   uiu_leader:
     id: 3
     role: NtfCaptain
