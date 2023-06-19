@@ -1,149 +1,101 @@
-﻿namespace UIURescueSquad
+﻿using Exiled.API.Features;
+using Exiled.Events.EventArgs.Map;
+using Exiled.Events.EventArgs.Server;
+using Exiled.Loader;
+using MEC;
+using PlayerRoles;
+using Respawning;
+using System.Collections.Generic;
+
+namespace UIURescueSquad
 {
-    using System;
-    using System.Linq;
-    using Configs;
-    using Exiled.API.Extensions;
-    using Exiled.API.Features;
-    using Exiled.API.Features.Items;
-    using Exiled.API.Features.Pickups;
-    using Exiled.API.Features.Roles;
-    using Exiled.CustomItems.API.Features;
-    using Exiled.Events.EventArgs.Map;
-    using Exiled.Events.EventArgs.Player;
-    using Exiled.Events.EventArgs.Server;
-    using MEC;
-    using PlayerRoles;
-    using Respawning;
-    using UnityEngine;
-    using static API;
-
-    using Random = UnityEngine.Random;
-
-    /// <summary>
-    /// EventHandlers and Methods which UIURescueSquad uses.
-    /// </summary>
-    public partial class EventHandlers
+    internal sealed class EventHandlers
     {
-        /// <summary>
-        /// Is UIU spawnable in <see cref="Exiled.Events.Handlers.Server.OnRespawningTeam(RespawningTeamEventArgs)"/>.
-        /// </summary>
-        public static bool IsSpawnable;
 
-        /// <summary>
-        /// The maximum number of UIU players in next the respawn.
-        /// </summary>
-        public static uint MaxPlayers;
+        private UIURescueSquad plugin;
+        public EventHandlers(UIURescueSquad plugin) => this.plugin = plugin;
 
-        private static int respawns = 0;
-        private static int uiurespawns = 0;
+        private int Respawns = 0;
+        private int UIURespawns = 0;
+        private bool UIUSpawns = false;
 
-        /// <summary>
-        /// Handles UIU spawn chance with all other conditions.
-        /// </summary>
-        internal static void CalculateChance()
+        public void OnRoundStarted()
         {
-            IsSpawnable = Random.Range(1, 101) <= Config.SpawnManager.Probability &&
-                respawns > Config.SpawnManager.Respawns &&
-                uiurespawns < Config.SpawnManager.MaxSpawns;
-
-            Log.Debug($"Is UIU spawnable: {IsSpawnable}");
+            Respawns = 0;
+            UIURespawns = 0;
+            UIUSpawns = false;
         }
 
-        /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnWaitingForPlayers"/>
-        internal static void OnWaitingForPlayers()
+        public void OnRespawningTeam(RespawningTeamEventArgs ev)
         {
-            respawns = 0;
-            MaxPlayers = Config.SpawnManager.MaxSquad;
-        }
-
-        /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnRespawningTeam(RespawningTeamEventArgs)"/>
-        internal static void OnTeamRespawn(RespawningTeamEventArgs ev)
-        {
-            respawns++;
-
-            if (ev.NextKnownTeam == SpawnableTeamType.NineTailedFox)
+            if(Loader.Random.Next(100) <= plugin.Config.SpawnManager.Probability &&
+                Respawns >= plugin.Config.SpawnManager.Respawns &&
+                UIURespawns < plugin.Config.SpawnManager.MaxSpawns &&
+                ev.NextKnownTeam == SpawnableTeamType.NineTailedFox)
             {
-                CalculateChance();
+                List<Player> players = new List<Player>();
+                if (ev.Players.Count > plugin.Config.SpawnManager.MaxSquad)
+                    players = ev.Players.GetRange(0, plugin.Config.SpawnManager.MaxSquad);
+                else
+                    players = ev.Players.GetRange(0, ev.Players.Count);
 
-                if (IsSpawnable)
+                Queue<RoleTypeId> queue = ev.SpawnQueue;
+                foreach (RoleTypeId role in queue)
                 {
-                    bool prioritySpawn = RespawnManager.Singleton._prioritySpawn;
-
-                    if (prioritySpawn)
-                        ev.Players.OrderBy(x => (x.Role as SpectatorRole).DeathTime);
-
-                    for (int i = ev.Players.Count; i > MaxPlayers; i--)
+                    if (players.Count <= 0)
+                        break;
+                    Player player = players.RandomItem();
+                    players.Remove(player);
+                    switch (role)
                     {
-                        Player player = prioritySpawn ? ev.Players.Last() : ev.Players[Random.Range(0, ev.Players.Count)];
-                        ev.Players.Remove(player);
+                        case RoleTypeId.NtfCaptain:
+                            plugin.Config.UiuLeader.AddRole(player);
+                            break;
+                        case RoleTypeId.NtfSergeant:
+                            plugin.Config.UiuAgent.AddRole(player);
+                            break;
+                        case RoleTypeId.NtfPrivate:
+                            plugin.Config.UiuSoldier.AddRole(player);
+                            break;
                     }
-
-                    Timing.CallDelayed(1.0f, () => {
-                        foreach (Player player in ev.Players)
-                            SpawnPlayer(player);
-
-                        if(!string.IsNullOrEmpty(Config.SpawnManager.AnnouncementText))
-                        {
-                            Map.ClearBroadcasts();
-                            Timing.CallDelayed(0.5f, () => Map.Broadcast(Config.SpawnManager.AnnouncementTime, Config.SpawnManager.AnnouncementText));
-                        }
-
-                        if (Config.SupplyDrop.DropEnabled)
-                        {
-                            foreach (var item in Config.SupplyDrop.DropItems)
-                            {
-                                Vector3 spawnPos = RoleTypeId.NtfPrivate.GetRandomSpawnLocation().Position;
-
-                                if (Enum.TryParse(item.Key, out ItemType parsedItem))
-                                {
-                                    Item item1 = Item.Create(parsedItem);
-                                    item1.CreatePickup(spawnPos, Random.rotation);
-                                }
-                                else
-                                {
-                                    CustomItem.TrySpawn(item.Key, spawnPos, out Pickup _);
-                                }
-                            }
-                        }
-                    });
-                    uiurespawns++;
-                    Timing.CallDelayed(2.5f, () => IsSpawnable = false);
                 }
+                UIURespawns++;
+                UIUSpawns = true;
+
+                ev.NextKnownTeam = SpawnableTeamType.None;
             }
+            Respawns++;
         }
 
-        /// <inheritdoc cref="Exiled.Events.Handlers.Map.OnAnnouncingNtfEntrance(AnnouncingNtfEntranceEventArgs) />
-        internal static void OnAnnouncingNTF(AnnouncingNtfEntranceEventArgs ev)
+        public void OnAnnouncingNtfEntrance(AnnouncingNtfEntranceEventArgs ev)
         {
             string cassieMessage = string.Empty;
-
-            if (!IsSpawnable)
+            if (!UIUSpawns)
             {
-                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(Config.SpawnManager.NtfAnnouncmentCassieNoScp))
+                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.SpawnManager.NtfAnnouncmentCassieNoScp))
                 {
-                    cassieMessage = Config.SpawnManager.NtfAnnouncmentCassieNoScp;
                     ev.IsAllowed = false;
+                    cassieMessage = plugin.Config.SpawnManager.NtfAnnouncmentCassieNoScp;
                 }
-                else if (!string.IsNullOrEmpty(Config.SpawnManager.NtfAnnouncementCassie))
+                else if (ev.ScpsLeft >= 1 && !string.IsNullOrEmpty(plugin.Config.SpawnManager.NtfAnnouncementCassie))
                 {
-                    cassieMessage = Config.SpawnManager.NtfAnnouncementCassie;
                     ev.IsAllowed = false;
+                    cassieMessage = plugin.Config.SpawnManager.NtfAnnouncementCassie;
                 }
-                    
             }
             else
             {
-                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncmentCassieNoScp)) 
+                if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.SpawnManager.UiuAnnouncmentCassieNoScp))
                 {
-                    cassieMessage = Config.SpawnManager.UiuAnnouncmentCassieNoScp;
                     ev.IsAllowed = false;
+                    cassieMessage = plugin.Config.SpawnManager.UiuAnnouncmentCassieNoScp;
                 }
-                else if (!string.IsNullOrEmpty(Config.SpawnManager.UiuAnnouncementCassie))
+                else if (ev.ScpsLeft >= 1 && !string.IsNullOrEmpty(plugin.Config.SpawnManager.UiuAnnouncementCassie))
                 {
-                    cassieMessage = Config.SpawnManager.UiuAnnouncementCassie;
                     ev.IsAllowed = false;
+                    cassieMessage = plugin.Config.SpawnManager.UiuAnnouncementCassie;
                 }
+                UIUSpawns = false;
             }
 
             cassieMessage = cassieMessage.Replace("{scpnum}", $"{ev.ScpsLeft} scpsubject");
@@ -154,31 +106,7 @@
             cassieMessage = cassieMessage.Replace("{designation}", $"nato_{ev.UnitName[0]} {ev.UnitNumber}");
 
             if (!string.IsNullOrEmpty(cassieMessage))
-                Cassie.GlitchyMessage(cassieMessage, Config.SpawnManager.GlitchChance, Config.SpawnManager.JamChance);
+                Cassie.GlitchyMessage(cassieMessage, plugin.Config.SpawnManager.GlitchChance, plugin.Config.SpawnManager.JamChance);
         }
-
-        /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnDestroying(DestroyingEventArgs)"/>
-        internal static void OnDestroy(DestroyingEventArgs ev)
-        {
-            if (IsUiu(ev.Player))
-                DestroyUIU(ev.Player);
-        }
-
-        /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnDied(DiedEventArgs)"/>
-        internal static void OnDied(DiedEventArgs ev)
-        {
-            if (IsUiu(ev.Player))
-                DestroyUIU(ev.Player);
-        }
-
-        /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnChangingRole(ChangingRoleEventArgs)"/>
-        internal static void OnChanging(ChangingRoleEventArgs ev)
-        {
-            Team team = PlayerRolesUtils.GetTeam(ev.NewRole);
-            if (IsUiu(ev.Player) && team != Team.FoundationForces)
-                DestroyUIU(ev.Player);
-        }
-
-        private static readonly Config Config = UIURescueSquad.Instance.Config;
     }
 }

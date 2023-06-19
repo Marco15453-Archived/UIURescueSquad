@@ -1,67 +1,49 @@
-﻿namespace UIURescueSquad
+﻿using System;
+using Exiled.API.Features;
+using Exiled.CustomRoles.API;
+using Exiled.CustomRoles.API.Features;
+
+using MapEvent = Exiled.Events.Handlers.Map;
+using ServerEvent = Exiled.Events.Handlers.Server;
+
+namespace UIURescueSquad
 {
-    using System;
-    using Exiled.API.Features;
-
-    using MapEvent = Exiled.Events.Handlers.Map;
-    using PlayerEvent = Exiled.Events.Handlers.Player;
-    using ServerEvent = Exiled.Events.Handlers.Server;
-
-    /// <summary>
-    /// The main class which inherits <see cref="Plugin{TConfig}"/>.
-    /// </summary>
     public class UIURescueSquad : Plugin<Configs.Config>
     {
-        /// <inheritdoc/>
-        public static UIURescueSquad Instance;
 
-        /// <inheritdoc/>
+        public override string Name { get; } = "UIURescueSquad";
+        public override string Author { get; } = "JesusQC, Michal78900, maintained by Marco15453";
+        public override string Prefix { get; } = "UIURescueSquad";
+        public override Version Version { get; } = new Version(5, 0, 0);
+        public override Version RequiredExiledVersion => new Version(7, 0, 0);
+
+        private EventHandlers eventHandlers;
+
         public override void OnEnabled()
         {
-            Instance = this;
+            Config.UiuSoldier.Register();
+            Config.UiuAgent.Register();
+            Config.UiuLeader.Register();
 
-            MapEvent.AnnouncingNtfEntrance += EventHandlers.OnAnnouncingNTF;
+            eventHandlers = new EventHandlers(this);
 
-            ServerEvent.RespawningTeam += EventHandlers.OnTeamRespawn;
-            ServerEvent.WaitingForPlayers += EventHandlers.OnWaitingForPlayers;
-
-            PlayerEvent.Destroying += EventHandlers.OnDestroy;
-            PlayerEvent.ChangingRole += EventHandlers.OnChanging;
-            PlayerEvent.Died += EventHandlers.OnDied;
+            ServerEvent.RoundStarted += eventHandlers.OnRoundStarted;
+            ServerEvent.RespawningTeam += eventHandlers.OnRespawningTeam;
+            MapEvent.AnnouncingNtfEntrance += eventHandlers.OnAnnouncingNtfEntrance;
 
             base.OnEnabled();
         }
 
-        /// <inheritdoc/>
         public override void OnDisabled()
         {
-            MapEvent.AnnouncingNtfEntrance -= EventHandlers.OnAnnouncingNTF;
+            CustomRole.UnregisterRoles();
 
-            ServerEvent.RespawningTeam -= EventHandlers.OnTeamRespawn;
-            ServerEvent.WaitingForPlayers -= EventHandlers.OnWaitingForPlayers;
+            ServerEvent.RoundStarted -= eventHandlers.OnRoundStarted;
+            ServerEvent.RespawningTeam -= eventHandlers.OnRespawningTeam;
+            MapEvent.AnnouncingNtfEntrance -= eventHandlers.OnAnnouncingNtfEntrance;
 
-            PlayerEvent.Destroying -= EventHandlers.OnDestroy;
-            PlayerEvent.ChangingRole -= EventHandlers.OnChanging;
-            PlayerEvent.Died -= EventHandlers.OnDied;
-
-            Instance = null;
-
+            eventHandlers = null;
             base.OnDisabled();
         }
-
-        /// <inheritdoc/>
-        public override string Name { get; } = "UIURescueSquad";
-
-        /// <inheritdoc/>
-        public override string Author { get; } = "JesusQC, Michal78900, maintained by Marco15453";
-
-        /// <inheritdoc/>
-        public override string Prefix { get; } = "UIURescueSquad";
-
-        /// <inheritdoc/>
-        public override Version Version { get; } = new Version(4, 1, 5);
-
-        /// <inheritdoc/>
-        public override Version RequiredExiledVersion => new Version(7, 0, 0);
     }
 }

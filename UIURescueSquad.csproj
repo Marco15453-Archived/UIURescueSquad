@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <LangVersion>9</LangVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -108,19 +109,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="API.cs" />
-    <Compile Include="Commands\SubCommands\List.cs" />
-    <Compile Include="Commands\SubCommands\Spawn.cs" />
-    <Compile Include="Commands\SubCommands\SpawnTeam.cs" />
-    <Compile Include="Commands\UIURescueSquadParentCommand.cs" />
     <Compile Include="Configs\Config.cs" />
-    <Compile Include="Configs\SubConfigs\SpawnManager.cs" />
-    <Compile Include="Configs\SubConfigs\SupplyDrop.cs" />
-    <Compile Include="Configs\SubConfigs\UiuLeader.cs" />
-    <Compile Include="Configs\SubConfigs\UiuAgent.cs" />
-    <Compile Include="Configs\SubConfigs\UiuSoldier.cs" />
+    <Compile Include="Configs\SpawnManager.cs" />
     <Compile Include="EventHandlers.cs" />
-    <Compile Include="Methods.cs" />
+    <Compile Include="Roles\UiuAgent.cs" />
+    <Compile Include="Roles\UiuLeader.cs" />
+    <Compile Include="Roles\UiuSoldier.cs" />
     <Compile Include="UIURescueSquad.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
