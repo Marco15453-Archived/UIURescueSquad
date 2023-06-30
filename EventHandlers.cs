@@ -5,6 +5,7 @@ using Exiled.Loader;
 using MEC;
 using PlayerRoles;
 using Respawning;
+using System;
 using System.Collections.Generic;
 
 namespace UIURescueSquad
@@ -17,23 +18,43 @@ namespace UIURescueSquad
 
         private int Respawns = 0;
         private int UIURespawns = 0;
-        public bool UIUSpawns = false;
+        private CoroutineHandle calcuationCoroutine;
 
         public void OnRoundStarted()
         {
+            plugin.IsSpawnable = false;
             Respawns = 0;
             UIURespawns = 0;
-            UIUSpawns = false;
+
+            if (calcuationCoroutine.IsRunning)
+                Timing.KillCoroutines(calcuationCoroutine);
+
+            calcuationCoroutine = Timing.RunCoroutine(spawnCalculation());
+        }
+
+        private IEnumerator<float> spawnCalculation()
+        {
+            while (true)
+            {
+                yield return Timing.WaitForSeconds(1f);
+
+                if (Round.IsEnded)
+                    break;
+
+                if (Math.Round(Respawn.TimeUntilSpawnWave.TotalSeconds, 0) != plugin.Config.SpawnWaveCalculation)
+                    continue;
+
+                if (Respawn.NextKnownTeam == SpawnableTeamType.NineTailedFox)
+                    plugin.IsSpawnable = Loader.Random.Next(100) <= plugin.Config.SpawnManager.Probability &&
+                        Respawns >= plugin.Config.SpawnManager.Respawns &&
+                        UIURespawns < plugin.Config.SpawnManager.MaxSpawns;
+            }
         }
 
         public void OnRespawningTeam(RespawningTeamEventArgs ev)
         {
-            if(Loader.Random.Next(100) <= plugin.Config.SpawnManager.Probability &&
-                Respawns >= plugin.Config.SpawnManager.Respawns &&
-                UIURespawns < plugin.Config.SpawnManager.MaxSpawns &&
-                ev.NextKnownTeam == SpawnableTeamType.NineTailedFox)
+            if(plugin.IsSpawnable)
             {
-                UIUSpawns = true;
                 List<Player> players = new List<Player>();
                 if (ev.Players.Count > plugin.Config.SpawnManager.MaxSquad)
                     players = ev.Players.GetRange(0, plugin.Config.SpawnManager.MaxSquad);
@@ -61,7 +82,6 @@ namespace UIURescueSquad
                     }
                 }
                 UIURespawns++;
-
                 ev.NextKnownTeam = SpawnableTeamType.None;
             }
             Respawns++;
@@ -70,7 +90,7 @@ namespace UIURescueSquad
         public void OnAnnouncingNtfEntrance(AnnouncingNtfEntranceEventArgs ev)
         {
             string cassieMessage = string.Empty;
-            if (!UIUSpawns)
+            if (!plugin.IsSpawnable)
             {
                 if (ev.ScpsLeft == 0 && !string.IsNullOrEmpty(plugin.Config.SpawnManager.NtfAnnouncmentCassieNoScp))
                 {
@@ -95,7 +115,7 @@ namespace UIURescueSquad
                     ev.IsAllowed = false;
                     cassieMessage = plugin.Config.SpawnManager.UiuAnnouncementCassie;
                 }
-                UIUSpawns = false;
+                plugin.IsSpawnable = false;
             }
 
             cassieMessage = cassieMessage.Replace("{scpnum}", $"{ev.ScpsLeft} scpsubject");

@@ -12,6 +12,9 @@ namespace UIURescueSquad.Configs
         [Description("Should debug messages be shown in a server console.")]
         public bool Debug { get; set; } = false;
 
+        [Description("How many seconds before a spawnwave occurs should it calculate the spawn chance")]
+        public int SpawnWaveCalculation { get; set; } = 10;
+
         [Description("Options for UIU spawn:")]
         public SpawnManager SpawnManager { get; private set; } = new SpawnManager();
 
