@@ -25,10 +25,7 @@ namespace UIURescueSquad.Configs
         public string NtfAnnouncementCassie { get; private set; } = "MTFUnit epsilon 11 designated {designation} hasentered AllRemaining AwaitingRecontainment {scpnum}";
         public string NtfAnnouncmentCassieNoScp { get; private set; } = "MTFUnit epsilon 11 designated {designation} hasentered AllRemaining NoSCPsLeft";
 
-        [Description("Custom Cassie glitch chance.")]
-        public float GlitchChance { get; private set; } = 0.05f;
-
-        [Description("Custom Cassie jam chance.")]
-        public float JamChance { get; private set; } = 0.05f;
+        [Description("Cassie Subtitles")]
+        public bool Subtitles { get; private set; } = false;
     }
 }

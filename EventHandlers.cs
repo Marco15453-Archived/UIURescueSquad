@@ -17,7 +17,7 @@ namespace UIURescueSquad
 
         private int Respawns = 0;
         private int UIURespawns = 0;
-        private bool UIUSpawns = false;
+        public bool UIUSpawns = false;
 
         public void OnRoundStarted()
         {
@@ -33,6 +33,7 @@ namespace UIURescueSquad
                 UIURespawns < plugin.Config.SpawnManager.MaxSpawns &&
                 ev.NextKnownTeam == SpawnableTeamType.NineTailedFox)
             {
+                UIUSpawns = true;
                 List<Player> players = new List<Player>();
                 if (ev.Players.Count > plugin.Config.SpawnManager.MaxSquad)
                     players = ev.Players.GetRange(0, plugin.Config.SpawnManager.MaxSquad);
@@ -60,7 +61,6 @@ namespace UIURescueSquad
                     }
                 }
                 UIURespawns++;
-                UIUSpawns = true;
 
                 ev.NextKnownTeam = SpawnableTeamType.None;
             }
@@ -106,7 +106,7 @@ namespace UIURescueSquad
             cassieMessage = cassieMessage.Replace("{designation}", $"nato_{ev.UnitName[0]} {ev.UnitNumber}");
 
             if (!string.IsNullOrEmpty(cassieMessage))
-                Cassie.GlitchyMessage(cassieMessage, plugin.Config.SpawnManager.GlitchChance, plugin.Config.SpawnManager.JamChance);
+                Cassie.Message(cassieMessage, isSubtitles: plugin.Config.SpawnManager.Subtitles);
         }
     }
 }
