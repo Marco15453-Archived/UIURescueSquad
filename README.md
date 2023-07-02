@@ -16,6 +16,7 @@ Place the `UIURescueSquad.dll` file in your EXILED/Plugins folder.
 * A configurable spawn location
 * Commands to spawn individual members and a squad manually
 * Announcements for a squad of UIU spawning, as well as two for ntf spawning to let the players know which one spawned
+* Compatible with [RespawnTimer](https://github.com/Michal78900/RespawnTimer)
 
 # Configs
 ```yml
