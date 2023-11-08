@@ -1,3 +1,4 @@
+# This Plugin has been **ABANDONED**
 # UIU Rescue Squad
 
 A plugin that adds a new class to your server named "UIU Rescue Squad". Their job is helpping the NTF completing their task. They have a chance to spawn instead of a squad of NTF.
